@@ -42,10 +42,12 @@
         .linha-mes-visita { background: #f9fafb; }
         .linha-mes-visita.mes-atual { background: #e6fffa; }
         .input-visita { width: 90px; margin: 0 auto; text-align: center; }
-        .linha-botoes-salvar { display: flex; gap: 6px; }
-        .linha-botoes-salvar button { flex: 1; }
+        .linha-botoes-salvar { display: flex; gap: 6px; flex-wrap: wrap; }
+        .linha-botoes-salvar button { flex: 1; min-width: 100px; }
         .btn-baixar { padding: 8px; background: #0055ff; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Georgia, sans-serif; }
         .btn-baixar:hover { background: #003fcc; }
+        .btn-relatorio { padding: 8px; background: #8e44ad; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Georgia, sans-serif; }
+        .btn-relatorio:hover { background: #6c3483; }
     </style>
 </head>
 <body>
@@ -56,7 +58,8 @@
 <div class="bloco" id="blocoSalvar">
     <div class="linha-botoes-salvar">
         <button class="btn-verde" onclick="salvarManual()">💾 Salvar</button>
-        <button class="btn-baixar" onclick="baixarBackup()">⬇️ Baixar</button>
+        <button class="btn-relatorio" onclick="gerarRelatorioPDF()">🖨️ Relatório</button>
+        <button class="btn-baixar" onclick="baixarBackup()">⬇️ Backup</button>
     </div>
     <p class="aviso" id="statusSalvo" style="text-align:center;margin-top:6px;"></p>
 </div>
@@ -419,6 +422,7 @@ function carregarDados(){
         ? `✅ Salvo em ${d.ultimoSalvamento}`
         : 'Nenhum salvamento ainda';
 }
+
 function baixarBackup(){
     let dados = {
         celula:document.getElementById('nomeCelula').value,
@@ -433,28 +437,4 @@ function baixarBackup(){
     let blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
     let url = URL.createObjectURL(blob);
     let a = document.createElement('a');
-    a.href = url;
-    let dataHoje = new Date().toISOString().slice(0,10);
-    a.download = `relatorio-celula-${dataHoje}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-function atualizarTudo(){atualizarTabelas();atualizarTabelaVisitas();atualizarGraficos();}
-
-window.onbeforeunload = function(){
-    if(alteracoesPendentes) return 'Você tem alterações não salvas. Deseja realmente sair?';
-};
-
-iniciar();
-
-if('serviceWorker' in navigator){
-    window.addEventListener('load', ()=>{
-        navigator.serviceWorker.register('sw.js').catch(()=>{});
-    });
-}
-</script>
-</body>
-</html>
+    a.href =
