@@ -9,6 +9,8 @@
     <link rel="icon" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Georgia, sans-serif; font-weight: 700; }
         body { background: #ffffff; padding: 10px; max-width: 100%; }
@@ -46,6 +48,9 @@
         .linha-botoes-salvar button { flex: 1; }
         .btn-baixar { padding: 8px; background: #0055ff; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Georgia, sans-serif; }
         .btn-baixar:hover { background: #003fcc; }
+        .btn-pdf { padding: 8px; background: #d32f2f; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Georgia, sans-serif; margin-top: 6px; width: 100%; }
+        .btn-pdf:hover { background: #a52424; }
+        .btn-pdf:disabled { background: #999; cursor: wait; }
     </style>
 </head>
 <body>
@@ -58,8 +63,12 @@
         <button class="btn-verde" onclick="salvarManual()">💾 Salvar</button>
         <button class="btn-baixar" onclick="baixarBackup()">⬇️ Baixar</button>
     </div>
+    <button class="btn-pdf" id="btnPdf" onclick="gerarPDF()">📄 Baixar Relatório em PDF</button>
     <p class="aviso" id="statusSalvo" style="text-align:center;margin-top:6px;"></p>
 </div>
+
+<!-- ÁREA QUE ENTRA NO PDF -->
+<div id="areaRelatorio">
 
 <!-- DADOS GERAIS -->
 <div class="bloco">
@@ -88,20 +97,6 @@
         <option value="masculina">Masc</option>
         <option value="feminina">Fem</option>
     </select>
-</div>
-
-<!-- PARTICIPANTES -->
-<div class="bloco">
-    <h2>Participante</h2>
-    <input type="text" id="nomeParticipante" placeholder="Digite o nome">
-    <button class="btn-verde" onclick="adicionarParticipante()">✅ Add</button>
-</div>
-
-<!-- VISITANTES -->
-<div class="bloco">
-    <h2>📋 VISITANTES</h2>
-    <input type="text" id="nomeVisitante" placeholder="Nome do visitante">
-    <button class="btn-verde" onclick="adicionarVisitante()">✅ Registrar</button>
 </div>
 
 <!-- MÊS/ANO E LEGENDA -->
@@ -169,6 +164,21 @@
         <option value="2" selected>2º Semestre</option>
     </select>
     <canvas id="graficoSemestral"></canvas>
+</div>
+
+</div><!-- fim areaRelatorio -->
+
+<!-- CADASTRO (fora do PDF) -->
+<div class="bloco">
+    <h2>Participante</h2>
+    <input type="text" id="nomeParticipante" placeholder="Digite o nome">
+    <button class="btn-verde" onclick="adicionarParticipante()">✅ Add</button>
+</div>
+
+<div class="bloco">
+    <h2>📋 VISITANTES</h2>
+    <input type="text" id="nomeVisitante" placeholder="Nome do visitante">
+    <button class="btn-verde" onclick="adicionarVisitante()">✅ Registrar</button>
 </div>
 
 <script>
@@ -427,34 +437,4 @@ function baixarBackup(){
         horario:document.getElementById('horario').value,
         inicio:document.getElementById('dataInicio').value,
         tipo:document.getElementById('tipoCelula').value,
-        obs:document.getElementById('observacoes').value,
-        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,mesAtual,anoAtual
-    };
-    let blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
-    let url = URL.createObjectURL(blob);
-    let a = document.createElement('a');
-    a.href = url;
-    let dataHoje = new Date().toISOString().slice(0,10);
-    a.download = `relatorio-celula-${dataHoje}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-function atualizarTudo(){atualizarTabelas();atualizarTabelaVisitas();atualizarGraficos();}
-
-window.onbeforeunload = function(){
-    if(alteracoesPendentes) return 'Você tem alterações não salvas. Deseja realmente sair?';
-};
-
-iniciar();
-
-if('serviceWorker' in navigator){
-    window.addEventListener('load', ()=>{
-        navigator.serviceWorker.register('sw.js').catch(()=>{});
-    });
-}
-</script>
-</body>
-</html>
+        obs:docum
