@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Célula</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Georgia, sans-serif; font-weight: 700; }
+        body { background: #ffffff; padding: 10px; max-width: 100%; }
+        h1 { text-align: center; font-size: 19px; color: #2c3e50; margin-bottom: 12px; text-transform: uppercase; }
+        .bloco { background: #fff; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #eee; }
+        .bloco h2 { font-size: 16px; margin-bottom: 5px; color: #2c3e50; }
+        input, select { width: 100%; padding: 7px; margin: 3px 0 7px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px; font-family: Georgia, sans-serif; }
+        .btn-verde { width: 100%; padding: 8px; background: #00882d; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Georgia, sans-serif; }
+        .btn-verde:hover { background: #007025; }
+        .linha-mes { display: flex; gap: 8px; margin: 4px 0; }
+        .area-legenda { padding: 5px 8px; margin-bottom: 8px; }
+        .legenda { display: flex; gap: 10px; align-items: center; margin: 3px 0; }
+        .legenda-item { width: 34px; height: 34px; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 16px; }
+        .cor-p { background: #0055ff; }
+        .cor-f { background: #ff6633; }
+        .cor-fj { background: #5c1a1a; }
+        .aviso { color: #666; font-size: 13px; margin-bottom: 0; line-height: 1.2; }
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th, td { border: 1px solid #ddd; padding: 5px 3px; text-align: center; font-size: 14px; }
+        th { background: #f5f5f5; }
+        .col-nome { text-align: left; width: auto; max-width: 180px; }
+        .col-acoes { width: 90px; }
+        .btn-lapis { background: none; border: none; font-size: 17px; cursor: pointer; color: #f59e0b; margin-bottom: 2px; font-family: Georgia, sans-serif; }
+        .status-btn { width: 38px; height: 34px; border: none; border-radius: 3px; color: white; font-weight: bold; cursor: pointer; font-size: 15px; font-family: Georgia, sans-serif; }
+        .btn-acao { border: none; border-radius: 3px; padding: 4px 6px; cursor: pointer; font-size: 14px; margin: 0 2px; }
+        .btn-editar { background: #ffc107; color: #000; }
+        .btn-excluir { background: #dc3545; color: white; }
+        .celula-cancelada { background: #e2e8f0; color: #475569; font-weight: bold; font-size: 11px; padding: 2px; line-height: 1.1; }
+        .contador-encontro { background: #e6fffa; color: #006644; padding: 6px; border-radius: 4px; font-weight: bold; margin-bottom: 6px; font-size: 15px; }
+        .grafico { margin-top: 10px; padding: 8px; border: 1px solid #eee; border-radius: 5px; }
+        .linha-mes-visita { background: #f9fafb; }
+        .linha-mes-visita.mes-atual { background: #e6fffa; }
+        .input-visita { width: 90px; margin: 0 auto; text-align: center; }
+        .linha-botoes-salvar { display: flex; gap: 6px; }
+        .linha-botoes-salvar button { flex: 1; }
+        .btn-baixar { padding: 8px; background: #0055ff; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Georgia, sans-serif; }
+        .btn-baixar:hover { background: #003fcc; }
+    </style>
+</head>
+<body>
+
+<h1>Relatório de Célula Mensal e Semestral 2026</h1>
+
+<!-- SALVAR -->
+<div class="bloco" id="blocoSalvar">
+    <div class="linha-botoes-salvar">
+        <button class="btn-verde" onclick="salvarManual()">💾 Salvar</button>
+        <button class="btn-baixar" onclick="baixarBackup()">⬇️ Baixar</button>
+    </div>
+    <p class="aviso" id="statusSalvo" style="text-align:center;margin-top:6px;"></p>
+</div>
+
+<!-- DADOS GERAIS -->
+<div class="bloco">
+    <h2>Dados</h2>
+    <label>Célula</label>
+    <input type="text" id="nomeCelula" placeholder="Nome da célula" onchange="marcarAlterado()">
+    <label>Líder</label>
+    <input type="text" id="nomeLider" placeholder="Nome do líder" onchange="marcarAlterado()">
+    <label>Dia</label>
+    <select id="diaSemana" onchange="marcarAlterado()">
+        <option value="sabado" selected>Sáb</option>
+        <option value="domingo">Dom</option>
+        <option value="segunda">Seg</option>
+        <option value="terca">Ter</option>
+        <option value="quarta">Qua</option>
+        <option value="quinta">Qui</option>
+        <option value="sexta">Sex</option>
+    </select>
+    <label>Horário</label>
+    <input type="time" id="horario" onchange="marcarAlterado()">
+    <label>Início</label>
+    <input type="date" id="dataInicio" onchange="marcarAlterado()">
+    <label>Tipo</label>
+    <select id="tipoCelula" onchange="marcarAlterado()">
+        <option value="mista" selected>Mista</option>
+        <option value="masculina">Masc</option>
+        <option value="feminina">Fem</option>
+    </select>
+</div>
+
+<!-- PARTICIPANTES -->
+<div class="bloco">
+    <h2>Participante</h2>
+    <input type="text" id="nomeParticipante" placeholder="Digite o nome">
+    <button class="btn-verde" onclick="adicionarParticipante()">✅ Add</button>
+</div>
+
+<!-- VISITANTES -->
+<div class="bloco">
+    <h2>📋 VISITANTES</h2>
+    <input type="text" id="nomeVisitante" placeholder="Nome do visitante">
+    <button class="btn-verde" onclick="adicionarVisitante()">✅ Registrar</button>
+</div>
+
+<!-- MÊS/ANO E LEGENDA -->
+<div class="bloco area-legenda">
+    <h2>Mês/Ano</h2>
+    <div class="linha-mes">
+        <select id="mes"></select>
+        <select id="ano"></select>
+    </div>
+    <div class="legenda">
+        <div class="legenda-item cor-p">P</div>
+        <div class="legenda-item cor-f">F</div>
+        <div class="legenda-item cor-fj">FJ</div>
+    </div>
+    <p class="aviso">Clique no ✏️ acima da data: digite o motivo e o encontro fica cancelado/adiado.</p>
+</div>
+
+<!-- TABELA PARTICIPANTES -->
+<div class="bloco">
+    <h2>Participantes - Frequência</h2>
+    <table id="tabelaParticipantes">
+        <thead id="cabecalhoParticipantes"></thead>
+        <tbody id="corpoParticipantes">
+            <tr><td colspan="10" style="color:#999;text-align:center">Adicione participantes acima</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- TABELA VISITANTES -->
+<div class="bloco">
+    <h2>Visitantes - Frequência</h2>
+    <table id="tabelaVisitantes">
+        <thead id="cabecalhoVisitantes"></thead>
+        <tbody id="corpoVisitantes">
+            <tr><td colspan="10" style="color:#999;text-align:center">Adicione visitantes acima</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ENCONTROS -->
+<div class="bloco">
+    <h2>Encontros</h2>
+    <div class="contador-encontro" id="contadorEncontros">0 confirmados</div>
+    <textarea id="observacoes" placeholder="Observações gerais..." style="width:100%;padding:6px;margin-top:6px;border:1px solid #ccc;border-radius:4px;font-family: Georgia, sans-serif;" onchange="marcarAlterado()"></textarea>
+</div>
+
+<!-- VISITAS DOMICILIARES -->
+<div class="bloco">
+    <h2>🏠 Visitas Domiciliares - Quantidade por Mês (<span id="anoVisitas"></span>)</h2>
+    <table id="tabelaVisitas">
+        <thead><tr><th class="col-nome">Mês</th><th>Quantidade</th></tr></thead>
+        <tbody id="corpoVisitas"></tbody>
+    </table>
+</div>
+
+<!-- GRÁFICOS -->
+<div class="grafico">
+    <h2>📊 Mês</h2>
+    <canvas id="graficoMensal"></canvas>
+</div>
+<div class="grafico">
+    <h2>📈 Semestre</h2>
+    <select id="selSemestre">
+        <option value="1">1º Semestre</option>
+        <option value="2" selected>2º Semestre</option>
+    </select>
+    <canvas id="graficoSemestral"></canvas>
+</div>
+
+<script>
+const nomesMeses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+let participantes = [];
+let visitantes = [];
+let presenca = {};
+let presencaVisitantes = {};
+let adiados = {};
+let visitasMensais = {}; // { ano: { mesIndex: quantidade } }
+let mesAtual = new Date().getMonth();
+let anoAtual = new Date().getFullYear();
+let grafMes, grafSem;
+
+// INICIA SELETORES
+function iniciar() {
+    const selMes = document.getElementById('mes');
+    const selAno = document.getElementById('ano');
+    nomesMeses.forEach((m,i)=>{selMes.innerHTML += `<option value="${i}">${m}</option>`});
+    selMes.value = mesAtual;
+    for(let a=anoAtual-2;a<=anoAtual+1;a++){selAno.innerHTML += `<option value="${a}">${a}</option>`}
+    selAno.value = anoAtual;
+    selMes.onchange = selAno.onchange = ()=>{
+        mesAtual = Number(selMes.value);
+        anoAtual = Number(selAno.value);
+        atualizarTudo();
+    };
+    document.getElementById('selSemestre').onchange = atualizarGraficos;
+    carregarDados();
+    atualizarTudo();
+}
+
+// GERA SÁBADOS DO MÊS
+function gerarSabados() {
+    let datas = [];
+    let d = new Date(anoAtual, mesAtual, 1);
+    while(d.getDay()!==6) d.setDate(d.getDate()+1);
+    while(d.getMonth()===mesAtual){
+        let dia = String(d.getDate()).padStart(2,'0');
+        datas.push({id: dia, texto: dia});
+        d.setDate(d.getDate()+7);
+    }
+    return datas;
+}
+
+// MARCAR CANCELADO
+function marcarCancelada(dia) {
+    if(adiados[dia]) {
+        let editar = confirm(`Já cancelado: ${adiados[dia]}\nOK = Editar | Cancelar = Desfazer`);
+        if(!editar) {
+            if(confirm('Desfazer?')) { delete adiados[dia]; marcarAlterado(); atualizarTudo(); }
+            return;
+        }
+    }
+    let motivo = prompt('Motivo:', adiados[dia] || '');
+    if(motivo === null) return;
+    adiados[dia] = motivo.trim() || null;
+    marcarAlterado(); atualizarTudo();
+}
+
+// ADICIONA ORDENADO
+function adicionarParticipante() {
+    let nome = document.getElementById('nomeParticipante').value.trim();
+    if(!nome) return alert('Digite o nome!');
+    if(participantes.includes(nome)) return alert('Já cadastrado!');
+    participantes.push(nome);
+    participantes.sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
+    presenca[nome] = {};
+    document.getElementById('nomeParticipante').value='';
+    marcarAlterado(); atualizarTudo();
+}
+function adicionarVisitante() {
+    let nome = document.getElementById('nomeVisitante').value.trim();
+    if(!nome) return alert('Digite o nome!');
+    if(visitantes.includes(nome)) return alert('Já registrado!');
+    visitantes.push(nome);
+    visitantes.sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
+    presencaVisitantes[nome] = {};
+    document.getElementById('nomeVisitante').value='';
+    marcarAlterado(); atualizarTudo();
+}
+
+// ALTERA STATUS
+function alterarStatus(nome, dia, tipo) {
+    if(adiados[dia]) return alert('Encontro cancelado: ' + adiados[dia]);
+    const ordem = ['P','F','FJ'];
+    const obj = tipo==='part' ? presenca : presencaVisitantes;
+    obj[nome][dia] = ordem[(ordem.indexOf(obj[nome][dia]||'P')+1)%3];
+    marcarAlterado(); atualizarTabelas(); atualizarGraficos();
+}
+
+// PORCENTAGEM INDIVIDUAL
+function calcPerc(nome, tipo) {
+    let datasValidas = gerarSabados().filter(d=>!adiados[d.id]);
+    if(!datasValidas.length) return 0;
+    let obj = tipo==='part' ? presenca : presencaVisitantes;
+    let ok = datasValidas.filter(d=>(obj[nome][d.id]||'P')!=='F').length;
+    return Math.round((ok/datasValidas.length)*100);
+}
+
+// EDITAR / EXCLUIR
+function editarNome(antigo,tipo){
+    let novo = prompt('Alterar nome:',antigo);
+    if(!novo || novo===antigo) return;
+    let arr = tipo==='part' ? participantes : visitantes;
+    let obj = tipo==='part' ? presenca : presencaVisitantes;
+    let idx = arr.indexOf(antigo);
+    arr[idx] = novo;
+    arr.sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
+    obj[novo] = obj[antigo];
+    delete obj[antigo];
+    marcarAlterado(); atualizarTudo();
+}
+function excluirNome(nome,tipo){
+    if(!confirm(`Remover ${nome}?`)) return;
+    let arr = tipo==='part' ? participantes : visitantes;
+    let obj = tipo==='part' ? presenca : presencaVisitantes;
+    arr.splice(arr.indexOf(nome),1);
+    delete obj[nome];
+    marcarAlterado(); atualizarTudo();
+}
+
+// CABEÇALHO COM LÁPIS E AÇÕES
+function montarCabecalho(dados) {
+    let html = `<tr><th class="col-nome">Nome</th>`;
+    dados.forEach(d=>{ html += `<th><button class="btn-lapis" onclick="marcarCancelada('${d.id}')">✏️</button><br>${d.texto}</th>`; });
+    html += `<th>%</th><th class="col-acoes">Ações</th></tr>`;
+    return html;
+}
+
+// ATUALIZA TABELAS
+function atualizarTabelas() {
+    let datas = gerarSabados();
+    document.getElementById('cabecalhoParticipantes').innerHTML = montarCabecalho(datas);
+    document.getElementById('cabecalhoVisitantes').innerHTML = montarCabecalho(datas);
+    document.getElementById('contadorEncontros').textContent = `${datas.filter(d=>!adiados[d.id]).length} encontros confirmados`;
+
+    // PARTICIPANTES
+    let corpP = document.getElementById('corpoParticipantes');
+    corpP.innerHTML = participantes.map(nome=>`
+    <tr>
+        <td class="col-nome"><strong>${nome}</strong></td>
+        ${datas.map(d=>{
+            if(adiados[d.id]) return `<td class="celula-cancelada">CANCELADO<br><small>${adiados[d.id]}</small></td>`;
+            let sts = presenca[nome][d.id] || 'P';
+            return `<td><button class="status-btn cor-${sts.toLowerCase()}" onclick="alterarStatus('${nome}','${d.id}','part')">${sts}</button></td>`;
+        }).join('')}
+        <td><strong>${calcPerc(nome,'part')}%</strong></td>
+        <td class="col-acoes">
+            <button class="btn-acao btn-editar" onclick="editarNome('${nome}','part')">✏️</button>
+            <button class="btn-acao btn-excluir" onclick="excluirNome('${nome}','part')">🗑️</button>
+        </td>
+    </tr>`).join('') || `<tr><td colspan="10" style="color:#999;text-align:center">Adicione participantes acima</td></tr>`;
+
+    // VISITANTES
+    let corpV = document.getElementById('corpoVisitantes');
+    corpV.innerHTML = visitantes.map(nome=>`
+    <tr>
+        <td class="col-nome"><strong>${nome}</strong></td>
+        ${datas.map(d=>{
+            if(adiados[d.id]) return `<td class="celula-cancelada">CANCELADO<br><small>${adiados[d.id]}</small></td>`;
+            let sts = presencaVisitantes[nome][d.id] || 'P';
+            return `<td><button class="status-btn cor-${sts.toLowerCase()}" onclick="alterarStatus('${nome}','${d.id}','vis')">${sts}</button></td>`;
+        }).join('')}
+        <td><strong>${calcPerc(nome,'vis')}%</strong></td>
+        <td class="col-acoes">
+            <button class="btn-acao btn-editar" onclick="editarNome('${nome}','vis')">✏️</button>
+            <button class="btn-acao btn-excluir" onclick="excluirNome('${nome}','vis')">🗑️</button>
+        </td>
+    </tr>`).join('') || `<tr><td colspan="10" style="color:#999;text-align:center">Adicione visitantes acima</td></tr>`;
+}
+
+// VISITAS DOMICILIARES - TABELA MENSAL (Mês = Quantidade)
+function atualizarTabelaVisitas() {
+    document.getElementById('anoVisitas').textContent = anoAtual;
+    if(!visitasMensais[anoAtual]) visitasMensais[anoAtual] = {};
+    let corpo = document.getElementById('corpoVisitas');
+    corpo.innerHTML = nomesMeses.map((m,i)=>`
+    <tr class="linha-mes-visita ${i===mesAtual ? 'mes-atual' : ''}">
+        <td class="col-nome"><strong>${m.toUpperCase()}</strong></td>
+        <td><input class="input-visita" type="number" min="0" value="${visitasMensais[anoAtual][i]||0}" onchange="atualizarVisita(${i}, this.value)"></td>
+    </tr>`).join('');
+}
+function atualizarVisita(mesIndex, valor) {
+    if(!visitasMensais[anoAtual]) visitasMensais[anoAtual] = {};
+    visitasMensais[anoAtual][mesIndex] = Number(valor) || 0;
+    marcarAlterado();
+}
+
+// GRÁFICOS
+function atualizarGraficos() {
+    let nomes = [...participantes].sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
+    let dados = nomes.map(n=>calcPerc(n,'part'));
+    if(grafMes) grafMes.destroy();
+    grafMes = new Chart(document.getElementById('graficoMensal'),{
+        type:'bar', data:{labels:nomes,datasets:[{data:dados,backgroundColor:'#0055ff'}]},
+        options:{responsive:true,scales:{y:{max:100}}}
+    });
+    if(grafSem) grafSem.destroy();
+    grafSem = new Chart(document.getElementById('graficoSemestral'),{
+        type:'bar', data:{labels:nomes,datasets:[{data:dados,backgroundColor:'#00997a'}]},
+        options:{responsive:true,scales:{y:{max:100}}}
+    });
+}
+
+// SALVAR/CARREGAR
+let alteracoesPendentes = false;
+
+function marcarAlterado(){
+    alteracoesPendentes = true;
+    document.getElementById('statusSalvo').textContent = '⚠️ Alterações não salvas — toque em Salvar';
+}
+
+function salvarManual(){
+    let agora = new Date();
+    let horaTexto = agora.toLocaleString('pt-BR');
+    localStorage.setItem('relCelula',JSON.stringify({
+        celula:document.getElementById('nomeCelula').value,
+        lider:document.getElementById('nomeLider').value,
+        dia:document.getElementById('diaSemana').value,
+        horario:document.getElementById('horario').value,
+        inicio:document.getElementById('dataInicio').value,
+        tipo:document.getElementById('tipoCelula').value,
+        obs:document.getElementById('observacoes').value,
+        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,mesAtual,anoAtual,
+        ultimoSalvamento:horaTexto
+    }));
+    alteracoesPendentes = false;
+    document.getElementById('statusSalvo').textContent = `✅ Salvo em ${horaTexto}`;
+}
+
+function carregarDados(){
+    let d = JSON.parse(localStorage.getItem('relCelula')||'{}');
+    document.getElementById('nomeCelula').value = d.celula||'';
+    document.getElementById('nomeLider').value = d.lider||'';
+    document.getElementById('diaSemana').value = d.dia||'sabado';
+    document.getElementById('horario').value = d.horario||'';
+    document.getElementById('dataInicio').value = d.inicio||'';
+    document.getElementById('tipoCelula').value = d.tipo||'mista';
+    document.getElementById('observacoes').value = d.obs||'';
+    participantes = d.participantes||[];
+    visitantes = d.visitantes||[];
+    presenca = d.presenca||{};
+    presencaVisitantes = d.presencaVisitantes||{};
+    adiados = d.adiados||{};
+    visitasMensais = d.visitasMensais||{};
+    document.getElementById('statusSalvo').textContent = d.ultimoSalvamento
+        ? `✅ Salvo em ${d.ultimoSalvamento}`
+        : 'Nenhum salvamento ainda';
+}
+function baixarBackup(){
+    let dados = {
+        celula:document.getElementById('nomeCelula').value,
+        lider:document.getElementById('nomeLider').value,
+        dia:document.getElementById('diaSemana').value,
+        horario:document.getElementById('horario').value,
+        inicio:document.getElementById('dataInicio').value,
+        tipo:document.getElementById('tipoCelula').value,
+        obs:document.getElementById('observacoes').value,
+        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,mesAtual,anoAtual
+    };
+    let blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement('a');
+    a.href = url;
+    let dataHoje = new Date().toISOString().slice(0,10);
+    a.download = `relatorio-celula-${dataHoje}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function atualizarTudo(){atualizarTabelas();atualizarTabelaVisitas();atualizarGraficos();}
+
+window.onbeforeunload = function(){
+    if(alteracoesPendentes) return 'Você tem alterações não salvas. Deseja realmente sair?';
+};
+
+iniciar();
+</script>
+</body>
+</html>
