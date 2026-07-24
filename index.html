@@ -384,6 +384,13 @@ function atualizarGraficos() {
     });
 }
 
+// ATUALIZA TUDO
+function atualizarTudo() {
+    atualizarTabelas();
+    atualizarTabelaVisitas();
+    atualizarGraficos();
+}
+
 // SALVAR/CARREGAR
 let alteracoesPendentes = false;
 
@@ -429,12 +436,11 @@ function carregarDados(){
         ? `✅ Salvo em ${d.ultimoSalvamento}`
         : 'Nenhum salvamento ainda';
 }
+
 function baixarBackup(){
     let dados = {
         celula:document.getElementById('nomeCelula').value,
         lider:document.getElementById('nomeLider').value,
         dia:document.getElementById('diaSemana').value,
         horario:document.getElementById('horario').value,
-        inicio:document.getElementById('dataInicio').value,
-        tipo:document.getElementById('tipoCelula').value,
-        obs:docum
+        
