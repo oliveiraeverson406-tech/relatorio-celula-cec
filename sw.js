@@ -1,5 +1,5 @@
-const CACHE_NAME = 'celula-cache-v2';
-const ARQUIVOS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE_NAME = 'celula-cache-v3';
+const ARQUIVOS = ['./', './index.html'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
