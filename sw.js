@@ -1,4 +1,4 @@
-const CACHE_NAME = 'celula-cache-v4';
+const CACHE_NAME = 'celula-cache-v5';
 const ARQUIVOS = ['./', './index.html'];
 
 self.addEventListener('install', (event) => {
