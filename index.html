@@ -65,7 +65,7 @@
     <label>Líder</label>
     <input type="text" id="nomeLider" placeholder="Nome do líder" onchange="marcarAlterado()">
     <label>Dia</label>
-    <select id="diaSemana" onchange="marcarAlterado()">
+    <select id="diaSemana" onchange="marcarAlterado(); atualizarTudo();">
         <option value="sabado" selected>Sáb</option>
         <option value="domingo">Dom</option>
         <option value="segunda">Seg</option>
@@ -197,11 +197,13 @@ function iniciar() {
     atualizarTudo();
 }
 
-// GERA SÁBADOS DO MÊS
+const diaSemanaMap = {domingo:0, segunda:1, terca:2, quarta:3, quinta:4, sexta:5, sabado:6};
+
 function gerarSabados() {
+    let diaAlvo = diaSemanaMap[document.getElementById('diaSemana').value] ?? 6;
     let datas = [];
     let d = new Date(anoAtual, mesAtual, 1);
-    while(d.getDay()!==6) d.setDate(d.getDate()+1);
+    while(d.getDay()!==diaAlvo) d.setDate(d.getDate()+1);
     while(d.getMonth()===mesAtual){
         let dia = String(d.getDate()).padStart(2,'0');
         datas.push({id: dia, texto: dia});
