@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Relatório Célula</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Georgia, sans-serif; font-weight: 700; }
         body { background: #ffffff; padding: 10px; max-width: 100%; }
@@ -42,9 +44,13 @@
         .linha-botoes-salvar button { flex: 1; }
         .btn-baixar { padding: 8px; background: #0055ff; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Georgia, sans-serif; }
         .btn-baixar:hover { background: #003fcc; }
+        .btn-backup-json { width: 100%; padding: 6px; margin-top: 6px; background: none; border: none; color: #0055ff; font-size: 12px; text-decoration: underline; cursor: pointer; font-family: Georgia, sans-serif; }
+        .gerando-pdf-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.85); display: none; align-items: center; justify-content: center; z-index: 9999; font-size: 16px; color: #2c3e50; }
     </style>
 </head>
 <body>
+
+<div class="gerando-pdf-overlay" id="overlayPdf">⏳ Gerando PDF...</div>
 
 <h1>Relatório de Célula Mensal e Semestral 2026</h1>
 
@@ -52,9 +58,10 @@
 <div class="bloco" id="blocoSalvar">
     <div class="linha-botoes-salvar">
         <button class="btn-verde" onclick="salvarManual()">💾 Salvar</button>
-        <button class="btn-baixar" onclick="baixarBackup()">⬇️ Baixar</button>
+        <button class="btn-baixar" onclick="baixarPDF()">⬇️ Baixar PDF</button>
     </div>
     <p class="aviso" id="statusSalvo" style="text-align:center;margin-top:6px;"></p>
+    <button class="btn-backup-json" onclick="baixarBackup()">Baixar backup de dados (.json)</button>
 </div>
 
 <!-- DADOS GERAIS -->
@@ -362,12 +369,12 @@ function atualizarGraficos() {
     let dados = nomes.map(n=>calcPerc(n,'part'));
     if(grafMes) grafMes.destroy();
     grafMes = new Chart(document.getElementById('graficoMensal'),{
-        type:'bar', data:{labels:nomes,datasets:[{data:dados,backgroundColor:'#0055ff'}]},
+        type:'bar', data:{labels:nomes,datasets:[{label:'% Presença', data:dados,backgroundColor:'#0055ff'}]},
         options:{responsive:true,scales:{y:{max:100}}}
     });
     if(grafSem) grafSem.destroy();
     grafSem = new Chart(document.getElementById('graficoSemestral'),{
-        type:'bar', data:{labels:nomes,datasets:[{data:dados,backgroundColor:'#00997a'}]},
+        type:'bar', data:{labels:nomes,datasets:[{label:'% Presença', data:dados,backgroundColor:'#00997a'}]},
         options:{responsive:true,scales:{y:{max:100}}}
     });
 }
@@ -417,6 +424,7 @@ function carregarDados(){
         ? `✅ Salvo em ${d.ultimoSalvamento}`
         : 'Nenhum salvamento ainda';
 }
+
 function baixarBackup(){
     let dados = {
         celula:document.getElementById('nomeCelula').value,
@@ -424,29 +432,4 @@ function baixarBackup(){
         dia:document.getElementById('diaSemana').value,
         horario:document.getElementById('horario').value,
         inicio:document.getElementById('dataInicio').value,
-        tipo:document.getElementById('tipoCelula').value,
-        obs:document.getElementById('observacoes').value,
-        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,mesAtual,anoAtual
-    };
-    let blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
-    let url = URL.createObjectURL(blob);
-    let a = document.createElement('a');
-    a.href = url;
-    let dataHoje = new Date().toISOString().slice(0,10);
-    a.download = `relatorio-celula-${dataHoje}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-function atualizarTudo(){atualizarTabelas();atualizarTabelaVisitas();atualizarGraficos();}
-
-window.onbeforeunload = function(){
-    if(alteracoesPendentes) return 'Você tem alterações não salvas. Deseja realmente sair?';
-};
-
-iniciar();
-</script>
-</body>
-</html>
+        ti
