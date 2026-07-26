@@ -65,14 +65,14 @@
     <label>Líder</label>
     <input type="text" id="nomeLider" placeholder="Nome do líder" onchange="marcarAlterado()">
     <label>Dia</label>
-    <select id="diaSemana" onchange="marcarAlterado()">
-        <option value="sabado" selected>Sáb</option>
+    <select id="diaSemana" onchange="mudarDiaSemana()">
         <option value="domingo">Dom</option>
         <option value="segunda">Seg</option>
         <option value="terca">Ter</option>
         <option value="quarta">Qua</option>
         <option value="quinta">Qui</option>
         <option value="sexta">Sex</option>
+        <option value="sabado" selected>Sáb</option>
     </select>
     <label>Horário</label>
     <input type="time" id="horario" onchange="marcarAlterado()">
@@ -169,6 +169,18 @@
 
 <script>
 const nomesMeses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+
+// Mapeia o valor do select "Dia" para o índice de dia da semana do JS (0=Domingo ... 6=Sábado)
+const diasSemanaIndice = {
+    domingo: 0,
+    segunda: 1,
+    terca: 2,
+    quarta: 3,
+    quinta: 4,
+    sexta: 5,
+    sabado: 6
+};
+
 let participantes = [];
 let visitantes = [];
 let presenca = {};
@@ -197,11 +209,20 @@ function iniciar() {
     atualizarTudo();
 }
 
-// GERA SÁBADOS DO MÊS
-function gerarSabados() {
+// Quando o dia da célula muda, marca alteração e refaz as tabelas
+// (elas dependem do dia da semana selecionado)
+function mudarDiaSemana() {
+    marcarAlterado();
+    atualizarTudo();
+}
+
+// GERA AS DATAS DO MÊS QUE CAEM NO DIA DA SEMANA CONFIGURADO
+function gerarDatasCelula() {
+    let valorDia = document.getElementById('diaSemana').value;
+    let indiceDia = diasSemanaIndice.hasOwnProperty(valorDia) ? diasSemanaIndice[valorDia] : 6;
     let datas = [];
     let d = new Date(anoAtual, mesAtual, 1);
-    while(d.getDay()!==6) d.setDate(d.getDate()+1);
+    while(d.getDay()!==indiceDia) d.setDate(d.getDate()+1);
     while(d.getMonth()===mesAtual){
         let dia = String(d.getDate()).padStart(2,'0');
         datas.push({id: dia, texto: dia});
@@ -258,7 +279,7 @@ function alterarStatus(nome, dia, tipo) {
 
 // PORCENTAGEM INDIVIDUAL
 function calcPerc(nome, tipo) {
-    let datasValidas = gerarSabados().filter(d=>!adiados[d.id]);
+    let datasValidas = gerarDatasCelula().filter(d=>!adiados[d.id]);
     if(!datasValidas.length) return 0;
     let obj = tipo==='part' ? presenca : presencaVisitantes;
     let ok = datasValidas.filter(d=>(obj[nome][d.id]||'P')!=='F').length;
@@ -297,7 +318,7 @@ function montarCabecalho(dados) {
 
 // ATUALIZA TABELAS
 function atualizarTabelas() {
-    let datas = gerarSabados();
+    let datas = gerarDatasCelula();
     document.getElementById('cabecalhoParticipantes').innerHTML = montarCabecalho(datas);
     document.getElementById('cabecalhoVisitantes').innerHTML = montarCabecalho(datas);
     document.getElementById('contadorEncontros').textContent = `${datas.filter(d=>!adiados[d.id]).length} encontros confirmados`;
@@ -429,22 +450,4 @@ function baixarBackup(){
     let blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
     let url = URL.createObjectURL(blob);
     let a = document.createElement('a');
-    a.href = url;
-    let dataHoje = new Date().toISOString().slice(0,10);
-    a.download = `relatorio-celula-${dataHoje}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-function atualizarTudo(){atualizarTabelas();atualizarTabelaVisitas();atualizarGraficos();}
-
-window.onbeforeunload = function(){
-    if(alteracoesPendentes) return 'Você tem alterações não salvas. Deseja realmente sair?';
-};
-
-iniciar();
-</script>
-</body>
-</html>
+    a.href = 
