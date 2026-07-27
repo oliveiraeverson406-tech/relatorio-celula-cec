@@ -215,7 +215,9 @@ function gerarSabados() {
 function participouNoMes(nome, tipo) {
     let obj = tipo==='part' ? presenca : presencaVisitantes;
     let prefixo = `${anoAtual}-${mesAtual}-`;
-    return Object.keys(obj[nome]||{}).some(k => k.startsWith(prefixo));
+    let temRegistro = Object.keys(obj[nome]||{}).some(k => k.startsWith(prefixo));
+if(tipo==='vis' && visitanteMes[nome] === `${anoAtual}-${mesAtual}`) return true;
+return temRegistro;
 }
 // MARCAR CANCELADO
 function marcarCancelada(dia) {
@@ -417,6 +419,7 @@ function carregarDados(){
     presencaVisitantes = d.presencaVisitantes||{};
     adiados = d.adiados||{};
     visitasMensais = d.visitasMensais||{};
+    visitanteMes = d.visitanteMes||{};
     document.getElementById('statusSalvo').textContent = d.ultimoSalvamento
         ? `✅ Salvo em ${d.ultimoSalvamento}`
         : 'Nenhum salvamento ainda';
@@ -430,7 +433,7 @@ function baixarBackup(){
         inicio:document.getElementById('dataInicio').value,
         tipo:document.getElementById('tipoCelula').value,
         obs:document.getElementById('observacoes').value,
-        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,mesAtual,anoAtual
+        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,visitanteMes,mesAtual,anoAtual
     };
     let blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
     let url = URL.createObjectURL(blob);
