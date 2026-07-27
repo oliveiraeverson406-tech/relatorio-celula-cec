@@ -332,7 +332,7 @@ function atualizarTabelas() {
 
     // VISITANTES
     let corpV = document.getElementById('corpoVisitantes');
-    corpV.innerHTML = visitantes.map(nome=>`
+    corpV.innerHTML = visitantes.filter(nome=>participouNoMes(nome,'vis')).map(nome=>`
     <tr>
         <td class="col-nome"><strong>${nome}</strong></td>
         ${datas.map(d=>{
