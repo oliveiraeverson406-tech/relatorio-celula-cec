@@ -327,8 +327,7 @@ function atualizarTabelas() {
     </tr>`).join('') || `<tr><td colspan="10" style="color:#999;text-align:center">Adicione participantes acima</td></tr>`;
 
     // VISITANTES
-    let corpV = visitantes.filter(nome=>participouNoMes(nome,'vis')).map(nome=>`
-    corpV.innerHTML = visitantes.map(nome=>`
+    corpV.innerHTML = visitantes.filter(nome=>participouNoMes(nome,'vis')).map(nome=>`
     <tr>
         <td class="col-nome"><strong>${nome}</strong></td>
         ${datas.map(d=>{
