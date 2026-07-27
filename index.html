@@ -436,7 +436,7 @@ function baixarBackup(){
         inicio:document.getElementById('dataInicio').value,
         tipo:document.getElementById('tipoCelula').value,
         obs:document.getElementById('observacoes').value,
-        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,visitanteMes,mesAtual,anoAtual
+        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,visitanteMes,mesAtual,anoAtual,
     };
     let blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
     let url = URL.createObjectURL(blob);
