@@ -175,6 +175,7 @@ let presenca = {};
 let presencaVisitantes = {};
 let adiados = {};
 let visitasMensais = {}; // { ano: { mesIndex: quantidade } }
+let visitanteMes = {};
 let mesAtual = new Date().getMonth();
 let anoAtual = new Date().getFullYear();
 let grafMes, grafSem;
@@ -252,6 +253,7 @@ function adicionarVisitante() {
     visitantes.push(nome);
     visitantes.sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
     presencaVisitantes[nome] = {};
+    visitanteMes[nome] = `${anoAtual}-${mesAtual}`;
     document.getElementById('nomeVisitante').value='';
     marcarAlterado(); atualizarTudo();
 }
@@ -329,6 +331,7 @@ function atualizarTabelas() {
     </tr>`).join('') || `<tr><td colspan="10" style="color:#999;text-align:center">Adicione participantes acima</td></tr>`;
 
     // VISITANTES
+    let corpV = document.getElementById('corpoVisitantes');
     corpV.innerHTML = visitantes.filter(nome=>participouNoMes(nome,'vis')).map(nome=>`
     <tr>
         <td class="col-nome"><strong>${nome}</strong></td>
