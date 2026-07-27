@@ -207,12 +207,16 @@ function gerarSabados() {
     while(d.getDay()!==diaAlvo) d.setDate(d.getDate()+1);
     while(d.getMonth()===mesAtual){
         let dia = String(d.getDate()).padStart(2,'0');
-        datas.push({id: dia, texto: dia});
+        datas.push({id: `${anoAtual}-${mesAtual}-${dia}`, texto: dia});
         d.setDate(d.getDate()+7);
     }
     return datas;
 }
-
+function participouNoMes(nome, tipo) {
+    let obj = tipo==='part' ? presenca : presencaVisitantes;
+    let prefixo = `${anoAtual}-${mesAtual}-`;
+    return Object.keys(obj[nome]||{}).some(k => k.startsWith(prefixo));
+}
 // MARCAR CANCELADO
 function marcarCancelada(dia) {
     if(adiados[dia]) {
@@ -323,7 +327,7 @@ function atualizarTabelas() {
     </tr>`).join('') || `<tr><td colspan="10" style="color:#999;text-align:center">Adicione participantes acima</td></tr>`;
 
     // VISITANTES
-    let corpV = document.getElementById('corpoVisitantes');
+    let corpV = visitantes.filter(nome=>participouNoMes(nome,'vis')).map(nome=>`
     corpV.innerHTML = visitantes.map(nome=>`
     <tr>
         <td class="col-nome"><strong>${nome}</strong></td>
