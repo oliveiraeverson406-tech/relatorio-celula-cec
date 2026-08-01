@@ -168,6 +168,10 @@
 </div>
 
 <script>
+<script type="module">
+import { db } from "./firebase-config.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
 const nomesMeses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 let participantes = [];
 let visitantes = [];
@@ -181,7 +185,7 @@ let anoAtual = new Date().getFullYear();
 let grafMes, grafSem;
 
 // INICIA SELETORES
-function iniciar() {
+async function iniciar() {
     const selMes = document.getElementById('mes');
     const selAno = document.getElementById('ano');
     nomesMeses.forEach((m,i)=>{selMes.innerHTML += `<option value="${i}">${m}</option>`});
@@ -194,7 +198,7 @@ function iniciar() {
         atualizarTudo();
     };
     document.getElementById('selSemestre').onchange = atualizarGraficos;
-    carregarDados();
+    await carregarDados();
     atualizarTudo();
 }
 
@@ -389,10 +393,10 @@ function marcarAlterado(){
     document.getElementById('statusSalvo').textContent = '⚠️ Alterações não salvas — toque em Salvar';
 }
 
-function salvarManual(){
+async function salvarManual(){
     let agora = new Date();
     let horaTexto = agora.toLocaleString('pt-BR');
-    localStorage.setItem('relCelula',JSON.stringify({
+    const dados = {
         celula:document.getElementById('nomeCelula').value,
         lider:document.getElementById('nomeLider').value,
         dia:document.getElementById('diaSemana').value,
@@ -402,13 +406,29 @@ function salvarManual(){
         obs:document.getElementById('observacoes').value,
         participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,visitanteMes,mesAtual,anoAtual,
         ultimoSalvamento:horaTexto
-    }));
-    alteracoesPendentes = false;
-    document.getElementById('statusSalvo').textContent = `✅ Salvo em ${horaTexto}`;
+    };
+    document.getElementById('statusSalvo').textContent = '⏳ Salvando...';
+    try{
+        await setDoc(doc(db, "relatorioCelula", "dados"), dados);
+        alteracoesPendentes = false;
+        document.getElementById('statusSalvo').textContent = `✅ Salvo em ${horaTexto}`;
+    }catch(erro){
+        console.error(erro);
+        document.getElementById('statusSalvo').textContent = '❌ Erro ao salvar. Verifique sua conexão.';
+    }
 }
 
-function carregarDados(){
-    let d = JSON.parse(localStorage.getItem('relCelula')||'{}');
+async function carregarDados(){
+    document.getElementById('statusSalvo').textContent = '⏳ Carregando...';
+    let d = {};
+    try{
+        const snap = await getDoc(doc(db, "relatorioCelula", "dados"));
+        if(snap.exists()) d = snap.data();
+    }catch(erro){
+        console.error(erro);
+        document.getElementById('statusSalvo').textContent = '❌ Erro ao carregar. Verifique sua conexão.';
+        return;
+    }
     document.getElementById('nomeCelula').value = d.celula||'';
     document.getElementById('nomeLider').value = d.lider||'';
     document.getElementById('diaSemana').value = d.dia||'sabado';
@@ -449,12 +469,24 @@ function baixarBackup(){
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
+    window.salvarManual = salvarManual;
+window.baixarBackup = baixarBackup;
+window.marcarAlterado = marcarAlterado;
+window.adicionarParticipante = adicionarParticipante;
+window.adicionarVisitante = adicionarVisitante;
+window.marcarCancelada = marcarCancelada;
+window.alterarStatus = alterarStatus;
+window.editarNome = editarNome;
+window.excluirNome = excluirNome;
+window.atualizarVisita = atualizarVisita;
+window.iniciar = iniciar;
 
 function atualizarTudo(){atualizarTabelas();atualizarTabelaVisitas();atualizarGraficos();}
 
 window.onbeforeunload = function(){
     if(alteracoesPendentes) return 'Você tem alterações não salvas. Deseja realmente sair?';
 };
+    
 
 iniciar();
 </script>
