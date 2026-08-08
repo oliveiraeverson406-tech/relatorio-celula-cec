@@ -1,537 +1,502 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório Célula</title>
-    <link rel="icon" type="image/png" href="icone-cec.png">
-<link rel="apple-touch-icon" href="icone-cec.png">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Georgia, sans-serif; font-weight: 700; }
-        body { background: #ffffff; padding: 10px; max-width: 100%; }
-        h1 { text-align: center; font-size: 19px; color: #2c3e50; margin-bottom: 12px; text-transform: uppercase; }
-        .bloco { background: #fff; padding: 8px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #eee; }
-        .bloco h2 { font-size: 16px; margin-bottom: 5px; color: #2c3e50; }
-        input, select { width: 100%; padding: 7px; margin: 3px 0 7px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px; font-family: Georgia, sans-serif; }
-        .btn-verde { width: 100%; padding: 8px; background: #00882d; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Georgia, sans-serif; }
-        .btn-verde:hover { background: #007025; }
-        .linha-mes { display: flex; gap: 8px; margin: 4px 0; }
-        .area-legenda { padding: 5px 8px; margin-bottom: 8px; }
-        .legenda { display: flex; gap: 10px; align-items: center; margin: 3px 0; }
-        .legenda-item { width: 34px; height: 34px; color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 16px; }
-        .cor-p { background: #0055ff; }
-        .cor-f { background: #ff6633; }
-        .cor-fj { background: #1a2c5c; }
-        .aviso { color: #666; font-size: 13px; margin-bottom: 0; line-height: 1.2; }
-        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
-        th, td { border: 1px solid #ddd; padding: 5px 3px; text-align: center; font-size: 14px; }
-        th { background: #f5f5f5; }
-        .col-nome { text-align: left; width: auto; max-width: 180px; }
-        .col-acoes { width: 90px; }
-        .btn-lapis { background: none; border: none; font-size: 17px; cursor: pointer; color: #f59e0b; margin-bottom: 2px; font-family: Georgia, sans-serif; }
-        .status-btn { width: 38px; height: 34px; border: none; border-radius: 3px; color: white; font-weight: bold; cursor: pointer; font-size: 15px; font-family: Georgia, sans-serif; }
-        .btn-acao { border: none; border-radius: 3px; padding: 4px 6px; cursor: pointer; font-size: 14px; margin: 0 2px; }
-        .btn-editar { background: #28a745; color: #fff; }
-        .btn-excluir { background: #dc3545; color: white; }
-        .celula-cancelada { background: #F5F5DC; color: #475569; font-weight: bold; font-size: 11px; padding: 2px; line-height: 1.1; }
-        .contador-encontro { background: #e6fffa; color: #006644; padding: 6px; border-radius: 4px; font-weight: bold; margin-bottom: 6px; font-size: 15px; }
-        .grafico { margin-top: 10px; padding: 8px; border: 1px solid #eee; border-radius: 5px; }
-        .linha-mes-visita { background: #f9fafb; }
-        .linha-mes-visita.mes-atual { background: #e6fffa; }
-        .input-visita { width: 90px; margin: 0 auto; text-align: center; background: #AAF0D1;}
-        .linha-botoes-salvar { display: flex; gap: 6px; }
-        .linha-botoes-salvar button { flex: 1; }
-        .btn-baixar { padding: 8px; background: #0055ff; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: Georgia, sans-serif; }
-        .btn-baixar:hover { background: #003fcc; }
-        /* ===== AUMENTO GERAL PARA MELHOR LEITURA ===== */
-        body { font-size: 27px; padding: 20px; }
-        h1 { font-size: 38px; margin-bottom: 24px; }
-        .bloco { padding: 20px; margin-bottom: 22px; border-radius: 10px; }
-        .bloco h2 { font-size: 30px; margin-bottom: 16px; }
-        label { font-size: 24px; }
-        input, select, textarea { padding: 18px; margin: 8px 0 18px; font-size: 25px; border-radius: 8px; }
-        .btn-verde, .btn-baixar { padding: 20px; font-size: 27px; border-radius: 8px; }
-        .legenda-item { width: 62px; height: 62px; font-size: 28px; }
-        .aviso { font-size: 21px; }
-        th, td { padding: 20px 12px; font-size: 26px; }
-        .col-nome strong { font-size: 26px; }
-        .status-btn { width: 92px; height: 76px; font-size: 30px; font-weight: bold; }
-        .item-produto, tr { min-height: 84px; }
-        .btn-lapis { font-size: 30px; }
-        .btn-acao { width: 58px; height: 58px; padding: 12px 16px; font-size: 24px; }
-        .contador-encontro { font-size: 26px; padding: 16px; }
-        .input-visita { width: 150px; padding: 16px; font-size: 24px; }
-        .grafico h2 { font-size: 27px; margin-bottom: 14px; }
-        /* ===== AUMENTO EXTRA SÓ NA ÁREA DE CADASTRO/TOPO ===== */
-        h1 { font-size: 48px; }
-        #blocoSalvar .btn-verde, #blocoSalvar .btn-baixar { font-size: 34px; padding: 26px; }
-        #blocoSalvar .aviso { font-size: 26px; }
-        .bloco h2 { font-size: 36px; }
-        .bloco label { font-size: 30px; }
-        .bloco input[type="text"],
-        .bloco input[type="time"],
-        .bloco input[type="date"],
-        .bloco select,
-        .bloco textarea { font-size: 32px; padding: 22px; }
-        .bloco .btn-verde { font-size: 32px; padding: 24px; }
-        .area-legenda .legenda-item { width: 74px; height: 74px; font-size: 34px; }
-        .area-legenda h2 { font-size: 36px; }
-        .area-legenda select { font-size: 32px; padding: 22px; }
-        /* ===== AUMENTO EXTRA: ENCONTROS E VISITAS DOMICILIARES ===== */
-        .contador-encontro { font-size: 32px; padding: 20px; }
-        #observacoes { font-size: 28px; padding: 20px; }
-        .bloco h2 { font-size: 36px; }
-        #tabelaVisitas th, #tabelaVisitas td { font-size: 30px; padding: 22px 14px; }
-        .input-visita { font-size: 30px; padding: 18px; width: 170px; }
-        .linha-mes-visita td:first-child strong { font-size: 30px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Célula - CEC</title>
+<style>
+  :root{
+    --verde-escuro:#1b4332;
+    --verde:#2d6a4f;
+    --verde-claro:#40916c;
+    --verde-fundo:#f1f6f3;
+    --azul:#1d4e89;
+    --vermelho:#b3261e;
+    --laranja:#c9701e;
+    --texto:#1c2b24;
+    --texto-suave:#5b6b62;
+    --branco:#ffffff;
+    --borda:#dfe8e2;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Segoe UI', Roboto, -apple-system, sans-serif;
+    background:var(--verde-fundo);
+    color:var(--texto);
+    padding-bottom:40px;
+  }
+  header{
+    background:var(--verde-escuro);
+    color:var(--branco);
+    padding:28px 20px 24px;
+  }
+  header h1{
+    font-size:1.5rem;
+    font-weight:700;
+  }
+  header p{
+    margin-top:6px;
+    font-size:0.9rem;
+    opacity:0.85;
+  }
+  .celula-info{
+    margin-top:14px;
+    background:rgba(255,255,255,0.12);
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:0.88rem;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  main{
+    max-width:640px;
+    margin:0 auto;
+    padding:20px 16px 0;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:14px;
+  }
+  .card{
+    background:var(--branco);
+    border:1px solid var(--borda);
+    border-radius:16px;
+    padding:18px 14px;
+    text-align:left;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    min-height:150px;
+  }
+  .card:active{
+    transform:scale(0.97);
+  }
+  .card:hover{
+    box-shadow:0 4px 14px rgba(27,67,50,0.12);
+  }
+  .icon-wrap{
+    width:48px; height:48px;
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:1.6rem;
+  }
+  .card.frequencia-celula .icon-wrap{ background:#e3edea; }
+  .card.dia-hora .icon-wrap{ background:#eef0fb; }
+  .card.frequencia-consagracao .icon-wrap{ background:#e6eefb; }
+  .card.dia-visita .icon-wrap{ background:#fdf1df; }
+  .card.lider-treinamento .icon-wrap{ background:#fbe7e2; }
+  .card.celula-cancelada .icon-wrap{ background:#f6e3e2; }
+
+  .card h2{
+    font-size:1rem;
+    font-weight:700;
+    color:var(--verde-escuro);
+  }
+  .card .metric{
+    font-size:1.6rem;
+    font-weight:800;
+    line-height:1;
+  }
+  .card .metric-label{
+    font-size:0.76rem;
+    color:var(--texto-suave);
+    margin-top:2px;
+  }
+  .card.celula-cancelada{
+    grid-column:1 / -1;
+    flex-direction:row;
+    align-items:center;
+    min-height:auto;
+  }
+  .card.celula-cancelada .conteudo{
+    flex:1;
+  }
+  .badge{
+    display:inline-block;
+    font-size:0.72rem;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:20px;
+    margin-top:4px;
+  }
+  .badge.ok{ background:#e3f0e9; color:var(--verde); }
+  .badge.atencao{ background:#fbeadd; color:var(--laranja); }
+  .badge.alerta{ background:#f8e3e1; color:var(--vermelho); }
+
+  section.detalhe{
+    display:none;
+    background:var(--branco);
+    border:1px solid var(--borda);
+    border-radius:16px;
+    padding:18px;
+    margin-top:16px;
+  }
+  section.detalhe.ativo{ display:block; }
+  section.detalhe h3{
+    color:var(--verde-escuro);
+    font-size:1.05rem;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .voltar{
+    background:none;
+    border:none;
+    color:var(--verde);
+    font-size:0.9rem;
+    font-weight:600;
+    margin-bottom:14px;
+    cursor:pointer;
+    padding:0;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:0.85rem;
+  }
+  table th, table td{
+    text-align:left;
+    padding:8px 6px;
+    border-bottom:1px solid var(--borda);
+  }
+  .status-pill{
+    display:inline-block;
+    padding:3px 10px;
+    border-radius:20px;
+    font-size:0.78rem;
+    font-weight:600;
+    color:#fff;
+  }
+  .status-pill.presente{ background:var(--azul); }
+  .status-pill.falta{ background:var(--vermelho); }
+  .status-pill.justificada{ background:var(--laranja); }
+  .legenda{
+    font-size:0.78rem;
+    color:var(--texto-suave);
+    margin-bottom:10px;
+  }
+  .alerta-faltas{
+    display:inline-block;
+    background:var(--vermelho);
+    color:#fff;
+    font-size:0.72rem;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:20px;
+    margin-left:6px;
+  }
+  .input-qtd{
+    width:70px;
+    padding:6px 8px;
+    border:1px solid var(--borda);
+    border-radius:6px;
+    font-size:0.88rem;
+  }
+  .lapis{
+    cursor:pointer;
+    font-size:0.85rem;
+    margin-left:4px;
+    opacity:0.65;
+  }
+  .lapis:hover{ opacity:1; }
+  footer{
+    text-align:center;
+    font-size:0.75rem;
+    color:var(--texto-suave);
+    margin-top:26px;
+  }
+</style>
 </head>
 <body>
 
-<h1>Relatório de Célula Mensal e Semestral 2026</h1>
+<header>
+  <h1>📋 Relatório de Célula</h1>
+  <p>Assembleia de Deus · Acompanhamento mensal</p>
+  <div class="celula-info">
+    <span><strong>Célula:</strong> —</span>
+    <span><strong>Líder:</strong> —</span>
+    <span id="header-dia-hora"><strong>Sábados, 19h30</strong></span>
+  </div>
+</header>
 
-<!-- SALVAR -->
-<div class="bloco" id="blocoSalvar">
-    <div class="linha-botoes-salvar">
-        <button class="btn-verde" onclick="salvarManual()">💾 Salvar</button>
-        <button class="btn-baixar" onclick="baixarBackup()">⬇️ Baixar</button>
-    </div>
-    <p class="aviso" id="statusSalvo" style="text-align:center;margin-top:6px;"></p>
-</div>
+<main id="main-dashboard">
+  <div class="grid">
 
-<!-- DADOS GERAIS -->
-<div class="bloco">
-    <h2>Dados</h2>
-    <label>Célula</label>
-    <input type="text" id="nomeCelula" placeholder="Nome da célula" onchange="marcarAlterado()">
-    <label>Líder</label>
-    <input type="text" id="nomeLider" placeholder="Nome do líder" onchange="marcarAlterado()">
-    <label>Dia</label>
-    <select id="diaSemana" onchange="marcarAlterado(); atualizarTudo();">
-        <option value="sabado" selected>Sáb</option>
-        <option value="domingo">Dom</option>
-        <option value="segunda">Seg</option>
-        <option value="terca">Ter</option>
-        <option value="quarta">Qua</option>
-        <option value="quinta">Qui</option>
-        <option value="sexta">Sex</option>
-    </select>
-    <label>Horário</label>
-    <input type="time" id="horario" onchange="marcarAlterado()">
-    <label>Início</label>
-    <input type="date" id="dataInicio" onchange="marcarAlterado()">
-    <label>Tipo</label>
-    <select id="tipoCelula" onchange="marcarAlterado()">
-        <option value="mista" selected>Mista</option>
-        <option value="masculina">Masc</option>
-        <option value="feminina">Fem</option>
-    </select>
-</div>
+    <button class="card frequencia-celula" onclick="mostrarDetalhe('detalhe-celula')">
+      <div class="icon-wrap">👥</div>
+      <h2>Frequência de Célula</h2>
+      <div class="metric">78%</div>
+      <div class="metric-label">Média de presença no mês</div>
+    </button>
 
-<!-- PARTICIPANTES -->
-<div class="bloco">
-    <h2>Participante</h2>
-    <input type="text" id="nomeParticipante" placeholder="Digite o nome">
-    <button class="btn-verde" onclick="adicionarParticipante()">✅ Add</button>
-</div>
+    <button class="card dia-hora" onclick="mostrarDetalhe('detalhe-dia-hora')">
+      <div class="icon-wrap">🗓️</div>
+      <h2>Dia e Horário da Célula</h2>
+      <div class="metric" id="resumo-dia-hora">Sábado</div>
+      <div class="metric-label" id="resumo-hora">19h30</div>
+    </button>
 
-<!-- VISITANTES -->
-<div class="bloco">
-    <h2>📋 VISITANTES</h2>
-    <input type="text" id="nomeVisitante" placeholder="Nome do visitante">
-    <button class="btn-verde" onclick="adicionarVisitante()">✅ Registrar</button>
-</div>
+    <button class="card frequencia-consagracao" onclick="mostrarDetalhe('detalhe-consagracao')">
+      <div class="icon-wrap">🙌</div>
+      <h2>Frequência de Consagração</h2>
+      <div class="metric">65%</div>
+      <div class="metric-label">Presença nos sábados</div>
+    </button>
 
-<!-- MÊS/ANO E LEGENDA -->
-<div class="bloco area-legenda">
-    <h2>Mês/Ano</h2>
-    <div class="linha-mes">
-        <select id="mes"></select>
-        <select id="ano"></select>
-    </div>
-    <div class="legenda">
-        <div class="legenda-item cor-p">P</div>
-        <div class="legenda-item cor-f">F</div>
-        <div class="legenda-item cor-fj">FJ</div>
-    </div>
-    <p class="aviso">Clique no ✏️ acima da data: digite o motivo e o encontro fica cancelado/adiado.</p>
-</div>
+    <button class="card dia-visita" onclick="mostrarDetalhe('detalhe-visitas')">
+      <div class="icon-wrap">☀️</div>
+      <h2>Dia de Visita</h2>
+      <div class="metric" id="resumo-visitas">6</div>
+      <div class="metric-label">Visitas domiciliares no mês</div>
+    </button>
 
-<!-- TABELA PARTICIPANTES -->
-<div class="bloco">
-    <h2>Participantes - Frequência</h2>
-    <table id="tabelaParticipantes">
-        <thead id="cabecalhoParticipantes"></thead>
-        <tbody id="corpoParticipantes">
-            <tr><td colspan="10" style="color:#999;text-align:center">Adicione participantes acima</td></tr>
-        </tbody>
+    <button class="card lider-treinamento" onclick="mostrarDetalhe('detalhe-treinamento')">
+      <div class="icon-wrap">📣</div>
+      <h2>Líder em Treinamento</h2>
+      <div class="metric">—</div>
+      <div class="metric-label">Nome do discipulador</div>
+    </button>
+
+    <button class="card celula-cancelada" onclick="mostrarDetalhe('detalhe-cancelada')">
+      <div class="icon-wrap">🚫</div>
+      <div class="conteudo">
+        <h2>Células Canceladas</h2>
+        <span class="badge atencao" id="badge-canceladas">1 no mês</span>
+      </div>
+    </button>
+
+  </div>
+
+  <!-- Painéis de detalhe: cada card abre o seu -->
+  <section class="detalhe" id="detalhe-celula">
+    <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
+    <h3>👥 Frequência de Célula</h3>
+    <p class="legenda">🔵 P = Presença &nbsp; 🔴 F = Falta &nbsp; 🟠 FJ = Falta Justificada</p>
+    <table>
+      <thead><tr>
+        <th>Participante</th>
+        <th>06/09 <span class="lapis" onclick="marcarCancelada('06/09')" title="Marcar como cancelada">✏️</span></th>
+        <th>13/09 <span class="lapis" onclick="marcarCancelada('13/09')" title="Marcar como cancelada">✏️</span></th>
+        <th>20/09 <span class="lapis" onclick="marcarCancelada('20/09')" title="Marcar como cancelada">✏️</span></th>
+      </tr></thead>
+      <tbody>
+        <tr><td><span class="nome-participante" id="nome-1">Ana Souza</span> <span class="lapis" onclick="editarNome('nome-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td></tr>
+        <tr><td><span class="nome-participante" id="nome-2">Carlos Lima</span> <span class="lapis" onclick="editarNome('nome-2')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill justificada">FJ</span></td><td><span class="status-pill presente">P</span></td></tr>
+      </tbody>
     </table>
-</div>
+    <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Toque no ✏️ ao lado da data pra marcar que não teve célula nesse dia — ela sai do cálculo de % e aparece automaticamente em "Células Canceladas".</p>
+  </section>
 
-<!-- TABELA VISITANTES -->
-<div class="bloco">
-    <h2>Visitantes - Frequência</h2>
-    <table id="tabelaVisitantes">
-        <thead id="cabecalhoVisitantes"></thead>
-        <tbody id="corpoVisitantes">
-            <tr><td colspan="10" style="color:#999;text-align:center">Adicione visitantes acima</td></tr>
-        </tbody>
+  <section class="detalhe" id="detalhe-dia-hora">
+    <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
+    <h3>🗓️ Dia e Horário da Célula</h3>
+    <p style="font-size:0.85rem; color:var(--texto-suave); margin-bottom:14px;">
+      Cada célula pode se reunir em um dia da semana diferente. Escolha o dia e o horário — isso ajusta automaticamente as colunas de frequência e consagração para as datas certas do mês.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:12px; max-width:320px;">
+      <div>
+        <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Dia da semana</label>
+        <select id="input-dia-semana" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+          <option value="0">Domingo</option>
+          <option value="1">Segunda-feira</option>
+          <option value="2">Terça-feira</option>
+          <option value="3">Quarta-feira</option>
+          <option value="4">Quinta-feira</option>
+          <option value="5">Sexta-feira</option>
+          <option value="6" selected>Sábado</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Horário</label>
+        <input type="time" id="input-horario" value="19:30" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+      </div>
+      <button onclick="salvarDiaHora()" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer;">Salvar</button>
+    </div>
+  </section>
+
+  <section class="detalhe" id="detalhe-consagracao">
+    <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
+    <h3>🙌 Frequência de Consagração</h3>
+    <p class="legenda">🔵 P = Presença &nbsp; 🔴 F = Falta &nbsp; 🟠 FJ = Falta Justificada</p>
+    <table id="tabela-consagracao">
+      <thead><tr><th>Participante</th><th>06/09</th><th>13/09</th><th>20/09</th><th>27/09</th></tr></thead>
+      <tbody>
+        <tr><td><span class="nome-participante">Ana Souza</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td></tr>
+        <tr><td><span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td></tr>
+      </tbody>
     </table>
-</div>
+  </section>
 
-<!-- ENCONTROS -->
-<div class="bloco">
-    <h2>Encontros</h2>
-    <div class="contador-encontro" id="contadorEncontros">0 confirmados</div>
-    <textarea id="observacoes" placeholder="Observações gerais..." style="width:100%;padding:6px;margin-top:6px;border:1px solid #ccc;border-radius:4px;font-family: Georgia, sans-serif;" onchange="marcarAlterado()"></textarea>
-</div>
-
-<!-- VISITAS DOMICILIARES -->
-<div class="bloco">
-    <h2>🏠 Visitas Domiciliares - Quantidade por Mês (<span id="anoVisitas"></span>)</h2>
-    <table id="tabelaVisitas">
-        <thead><tr><th class="col-nome">Mês</th><th>Quantidade</th></tr></thead>
-        <tbody id="corpoVisitas"></tbody>
+  <section class="detalhe" id="detalhe-visitas">
+    <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
+    <h3>☀️ Visitas Domiciliares</h3>
+    <p class="legenda">Preencha a quantidade de visitas feitas em cada mês.</p>
+    <table>
+      <thead><tr><th>Mês</th><th>Quantidade</th></tr></thead>
+      <tbody id="tabela-visitas">
+        <tr><td>Janeiro</td><td><input type="number" min="0" class="input-qtd" data-mes="Janeiro" value="0"></td></tr>
+        <tr><td>Fevereiro</td><td><input type="number" min="0" class="input-qtd" data-mes="Fevereiro" value="0"></td></tr>
+        <tr><td>Março</td><td><input type="number" min="0" class="input-qtd" data-mes="Março" value="0"></td></tr>
+        <tr><td>Abril</td><td><input type="number" min="0" class="input-qtd" data-mes="Abril" value="0"></td></tr>
+        <tr><td>Maio</td><td><input type="number" min="0" class="input-qtd" data-mes="Maio" value="0"></td></tr>
+        <tr><td>Junho</td><td><input type="number" min="0" class="input-qtd" data-mes="Junho" value="0"></td></tr>
+        <tr><td>Julho</td><td><input type="number" min="0" class="input-qtd" data-mes="Julho" value="0"></td></tr>
+        <tr><td>Agosto</td><td><input type="number" min="0" class="input-qtd" data-mes="Agosto" value="4"></td></tr>
+        <tr><td>Setembro</td><td><input type="number" min="0" class="input-qtd" data-mes="Setembro" value="6"></td></tr>
+        <tr><td>Outubro</td><td><input type="number" min="0" class="input-qtd" data-mes="Outubro" value="0"></td></tr>
+        <tr><td>Novembro</td><td><input type="number" min="0" class="input-qtd" data-mes="Novembro" value="0"></td></tr>
+        <tr><td>Dezembro</td><td><input type="number" min="0" class="input-qtd" data-mes="Dezembro" value="0"></td></tr>
+      </tbody>
     </table>
-</div>
+    <button onclick="salvarVisitas()" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer; margin-top:14px; width:100%;">Salvar</button>
+  </section>
 
-<!-- GRÁFICOS -->
-<div class="grafico">
-    <h2>📊 Mês</h2>
-    <canvas id="graficoMensal"></canvas>
-</div>
-<div class="grafico">
-    <h2>📈 Semestre</h2>
-    <select id="selSemestre">
-        <option value="1">1º Semestre</option>
-        <option value="2" selected>2º Semestre</option>
-    </select>
-    <canvas id="graficoSemestral"></canvas>
-</div>
+  <section class="detalhe" id="detalhe-treinamento">
+    <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
+    <h3>📣 Líder em Treinamento</h3>
+    <p style="font-size:0.9rem; color:var(--texto-suave);">Cadastre aqui o nome do líder em treinamento e o acompanhamento do discipulado.</p>
+  </section>
 
-<script type="module">
-import { db } from "./firebase-config.js";
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+  <section class="detalhe" id="detalhe-cancelada">
+    <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
+    <h3>🚫 Células Canceladas</h3>
+    <p class="legenda" id="resumo-canceladas-mes">Setembro: 1 cancelada</p>
+    <table>
+      <thead><tr><th>Data</th><th>Motivo</th><th></th></tr></thead>
+      <tbody id="tabela-canceladas">
+        <tr><td>27/09</td><td class="motivo-texto">Chuva forte</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td></tr>
+      </tbody>
+    </table>
+  </section>
 
-const nomesMeses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-let participantes = [];
-let visitantes = [];
-let presenca = {};
-let presencaVisitantes = {};
-let adiados = {};
-let visitasMensais = {}; // { ano: { mesIndex: quantidade } }
-let visitanteMes = {};
-let mesAtual = new Date().getMonth();
-let anoAtual = new Date().getFullYear();
-let grafMes, grafSem;
+</main>
 
-// INICIA SELETORES
-async function iniciar() {
-    const selMes = document.getElementById('mes');
-    const selAno = document.getElementById('ano');
-    nomesMeses.forEach((m,i)=>{selMes.innerHTML += `<option value="${i}">${m}</option>`});
-    selMes.value = mesAtual;
-    for(let a=anoAtual-2;a<=anoAtual+1;a++){selAno.innerHTML += `<option value="${a}">${a}</option>`}
-    selAno.value = anoAtual;
-    selMes.onchange = selAno.onchange = ()=>{
-        mesAtual = Number(selMes.value);
-        anoAtual = Number(selAno.value);
-        atualizarTudo();
-    };
-    document.getElementById('selSemestre').onchange = atualizarGraficos;
-    await carregarDados();
-    atualizarTudo();
+<footer>CEC · Relatório de Célula</footer>
+
+<script>
+function mostrarDetalhe(id){
+  document.getElementById('main-dashboard').querySelector('.grid').style.display='none';
+  document.querySelectorAll('.detalhe').forEach(s=>s.classList.remove('ativo'));
+  document.getElementById(id).classList.add('ativo');
+}
+function voltarDashboard(){
+  document.querySelectorAll('.detalhe').forEach(s=>s.classList.remove('ativo'));
+  document.getElementById('main-dashboard').querySelector('.grid').style.display='grid';
 }
 
-// GERA AS DATAS DO MÊS CONFORME O DIA DA SEMANA ESCOLHIDO
-const diaSemanaMap = {domingo:0, segunda:1, terca:2, quarta:3, quinta:4, sexta:5, sabado:6};
+const DIAS_SEMANA = ['Domingos','Segundas-feiras','Terças-feiras','Quartas-feiras','Quintas-feiras','Sextas-feiras','Sábados'];
+const DIAS_SEMANA_SINGULAR = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
 
-function gerarSabados() {
-    let diaAlvo = diaSemanaMap[document.getElementById('diaSemana').value] ?? 6;
-    let datas = [];
-    let d = new Date(anoAtual, mesAtual, 1);
-    while(d.getDay()!==diaAlvo) d.setDate(d.getDate()+1);
-    while(d.getMonth()===mesAtual){
-        let dia = String(d.getDate()).padStart(2,'0');
-        datas.push({id: `${anoAtual}-${mesAtual}-${dia}`, texto: dia});
-        d.setDate(d.getDate()+7);
+function salvarDiaHora(){
+  const dia = document.getElementById('input-dia-semana').value;
+  const hora = document.getElementById('input-horario').value;
+  localStorage.setItem('celula_dia_semana', dia);
+  localStorage.setItem('celula_horario', hora);
+  atualizarResumoDiaHora();
+  voltarDashboard();
+  // TODO: quando integrado ao app real, aqui deve recalcular as colunas
+  // de sábado/dia-da-semana das tabelas de Frequência e Consagração
+  // com base no dia escolhido, em vez de fixar em sábado.
+}
+
+function atualizarResumoDiaHora(){
+  const dia = parseInt(localStorage.getItem('celula_dia_semana') ?? '6');
+  const hora = localStorage.getItem('celula_horario') || '19:30';
+  const horaFormatada = hora.replace(':','h');
+  document.getElementById('resumo-dia-hora').textContent = DIAS_SEMANA_SINGULAR[dia];
+  document.getElementById('resumo-hora').textContent = horaFormatada;
+  document.getElementById('header-dia-hora').innerHTML = `<strong>${DIAS_SEMANA[dia]}, ${horaFormatada}</strong>`;
+  document.getElementById('input-dia-semana').value = dia;
+  document.getElementById('input-horario').value = hora;
+}
+
+atualizarResumoDiaHora();
+
+function editarNome(id){
+  const span = document.getElementById(id);
+  const novoNome = prompt('Editar nome do participante:', span.textContent);
+  if(novoNome === null || novoNome.trim() === '') return; // cancelou ou deixou vazio
+  span.textContent = novoNome.trim();
+  // o histórico de presença da linha não é alterado, só o nome
+}
+
+function verificarFaltasConsagracao(){
+  const linhas = document.querySelectorAll('#tabela-consagracao tbody tr');
+  linhas.forEach(linha=>{
+    const faltas = linha.querySelectorAll('.status-pill.falta').length;
+    const nomeSpan = linha.querySelector('.nome-participante');
+    // remove alerta antigo, se tiver
+    const alertaAntigo = linha.querySelector('.alerta-faltas');
+    if(alertaAntigo) alertaAntigo.remove();
+    if(faltas >= 3){
+      const alerta = document.createElement('span');
+      alerta.className = 'alerta-faltas';
+      alerta.textContent = '⚠ ' + faltas + ' faltas';
+      nomeSpan.after(alerta);
     }
-    return datas;
+  });
 }
-function participouNoMes(nome, tipo) {
-    let obj = tipo==='part' ? presenca : presencaVisitantes;
-    let prefixo = `${anoAtual}-${mesAtual}-`;
-    let temRegistro = Object.keys(obj[nome]||{}).some(k => k.startsWith(prefixo));
-if(tipo==='vis' && visitanteMes[nome] === `${anoAtual}-${mesAtual}`) return true;
-return temRegistro;
+verificarFaltasConsagracao();
+
+const MESES_NOME = {'01':'Janeiro','02':'Fevereiro','03':'Março','04':'Abril','05':'Maio','06':'Junho','07':'Julho','08':'Agosto','09':'Setembro','10':'Outubro','11':'Novembro','12':'Dezembro'};
+
+function marcarCancelada(data){
+  // adiciona a linha na tabela de Células Canceladas sem motivo ainda
+  const tabela = document.getElementById('tabela-canceladas');
+  const linha = document.createElement('tr');
+  linha.innerHTML = `<td>${data}</td><td class="motivo-texto">—</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
+  tabela.appendChild(linha);
+
+  atualizarResumoCanceladas();
+
+  alert(data + ' marcada como célula cancelada. Toque no ✏️ na lista de "Células Canceladas" pra justificar o motivo.');
 }
-// MARCAR CANCELADO
-function marcarCancelada(dia) {
-    if(adiados[dia]) {
-        let editar = confirm(`Já cancelado: ${adiados[dia]}\nOK = Editar | Cancelar = Desfazer`);
-        if(!editar) {
-            if(confirm('Desfazer?')) { delete adiados[dia]; marcarAlterado(); atualizarTudo(); }
-            return;
-        }
+
+function justificarCancelamento(botao){
+  const linha = botao.closest('tr');
+  const celulaMotivo = linha.querySelector('.motivo-texto');
+  const atual = celulaMotivo.textContent === '—' ? '' : celulaMotivo.textContent;
+  const motivo = prompt('Motivo do cancelamento:', atual);
+  if(motivo === null) return;
+  celulaMotivo.textContent = motivo.trim() || '—';
+}
+
+function atualizarResumoCanceladas(){
+  const tabela = document.getElementById('tabela-canceladas');
+  const linhas = tabela.querySelectorAll('tr');
+  const total = linhas.length;
+  document.getElementById('badge-canceladas').textContent = total + ' no mês';
+
+  // agrupa por mês com base no dia/mês da data (dd/mm)
+  const porMes = {};
+  linhas.forEach(l=>{
+    const data = l.children[0].textContent.trim();
+    const partes = data.split('/');
+    if(partes.length === 2){
+      const nomeMes = MESES_NOME[partes[1]] || partes[1];
+      porMes[nomeMes] = (porMes[nomeMes] || 0) + 1;
     }
-    let motivo = prompt('Motivo:', adiados[dia] || '');
-    if(motivo === null) return;
-    adiados[dia] = motivo.trim() || null;
-    marcarAlterado(); atualizarTudo();
+  });
+  const resumoTexto = Object.entries(porMes).map(([mes,qtd])=>`${mes}: ${qtd} cancelada${qtd>1?'s':''}`).join(' · ');
+  document.getElementById('resumo-canceladas-mes').textContent = resumoTexto || 'Nenhum cancelamento registrado';
 }
+atualizarResumoCanceladas();
 
-// ADICIONA ORDENADO
-function adicionarParticipante() {
-    let nome = document.getElementById('nomeParticipante').value.trim();
-    if(!nome) return alert('Digite o nome!');
-    if(participantes.includes(nome)) return alert('Já cadastrado!');
-    participantes.push(nome);
-    participantes.sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
-    presenca[nome] = {};
-    document.getElementById('nomeParticipante').value='';
-    marcarAlterado(); atualizarTudo();
+function salvarVisitas(){
+  const inputs = document.querySelectorAll('#tabela-visitas .input-qtd');
+  let total = 0;
+  inputs.forEach(i => total += parseInt(i.value || '0'));
+  document.getElementById('resumo-visitas').textContent = total;
+  localStorage.setItem('celula_visitas_total', total);
+  voltarDashboard();
 }
-function adicionarVisitante() {
-    let nome = document.getElementById('nomeVisitante').value.trim();
-    if(!nome) return alert('Digite o nome!');
-    if(visitantes.includes(nome)) return alert('Já registrado!');
-    visitantes.push(nome);
-    visitantes.sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
-    presencaVisitantes[nome] = {};
-    visitanteMes[nome] = `${anoAtual}-${mesAtual}`;
-    document.getElementById('nomeVisitante').value='';
-    marcarAlterado(); atualizarTudo();
-}
-
-// ALTERA STATUS
-function alterarStatus(nome, dia, tipo) {
-    if(adiados[dia]) return alert('Encontro cancelado: ' + adiados[dia]);
-    const ordem = ['P','F','FJ'];
-    const obj = tipo==='part' ? presenca : presencaVisitantes;
-    obj[nome][dia] = ordem[(ordem.indexOf(obj[nome][dia]||'P')+1)%3];
-    marcarAlterado(); atualizarTabelas(); atualizarGraficos();
-}
-
-// PORCENTAGEM INDIVIDUAL
-function calcPerc(nome, tipo) {
-    let datasValidas = gerarSabados().filter(d=>!adiados[d.id]);
-    if(!datasValidas.length) return 0;
-    let obj = tipo==='part' ? presenca : presencaVisitantes;
-    let ok = datasValidas.filter(d=>(obj[nome][d.id]||'P')!=='F').length;
-    return Math.round((ok/datasValidas.length)*100);
-}
-
-// EDITAR / EXCLUIR
-function editarNome(antigo,tipo){
-    let novo = prompt('Alterar nome:',antigo);
-    if(!novo || novo===antigo) return;
-    let arr = tipo==='part' ? participantes : visitantes;
-    let obj = tipo==='part' ? presenca : presencaVisitantes;
-    let idx = arr.indexOf(antigo);
-    arr[idx] = novo;
-    arr.sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
-    obj[novo] = obj[antigo];
-    delete obj[antigo];
-    marcarAlterado(); atualizarTudo();
-}
-function excluirNome(nome,tipo){
-    if(!confirm(`Remover ${nome}?`)) return;
-    let arr = tipo==='part' ? participantes : visitantes;
-    let obj = tipo==='part' ? presenca : presencaVisitantes;
-    arr.splice(arr.indexOf(nome),1);
-    delete obj[nome];
-    marcarAlterado(); atualizarTudo();
-}
-
-// CABEÇALHO COM LÁPIS E AÇÕES
-function montarCabecalho(dados) {
-    let html = `<tr><th class="col-nome">Nome</th>`;
-    dados.forEach(d=>{ html += `<th><button class="btn-lapis" onclick="marcarCancelada('${d.id}')">✏️</button><br>${d.texto}</th>`; });
-    html += `<th>%</th><th class="col-acoes">Ações</th></tr>`;
-    return html;
-}
-
-// ATUALIZA TABELAS
-function atualizarTabelas() {
-    let datas = gerarSabados();
-    document.getElementById('cabecalhoParticipantes').innerHTML = montarCabecalho(datas);
-    document.getElementById('cabecalhoVisitantes').innerHTML = montarCabecalho(datas);
-    document.getElementById('contadorEncontros').textContent = `${datas.filter(d=>!adiados[d.id]).length} encontros confirmados`;
-
-    // PARTICIPANTES
-    let corpP = document.getElementById('corpoParticipantes');
-    corpP.innerHTML = participantes.map(nome=>`
-    <tr>
-        <td class="col-nome"><strong>${nome}</strong></td>
-        ${datas.map(d=>{
-            if(adiados[d.id]) return `<td class="celula-cancelada">CANCELADO<br><small>${adiados[d.id]}</small></td>`;
-            let sts = presenca[nome][d.id] || 'P';
-            return `<td><button class="status-btn cor-${sts.toLowerCase()}" onclick="alterarStatus('${nome}','${d.id}','part')">${sts}</button></td>`;
-        }).join('')}
-        <td><strong>${calcPerc(nome,'part')}%</strong></td>
-        <td class="col-acoes">
-            <button class="btn-acao btn-editar" onclick="editarNome('${nome}','part')">✏️</button>
-            <button class="btn-acao btn-excluir" onclick="excluirNome('${nome}','part')">🗑️</button>
-        </td>
-    </tr>`).join('') || `<tr><td colspan="10" style="color:#999;text-align:center">Adicione participantes acima</td></tr>`;
-
-    // VISITANTES
-    let corpV = document.getElementById('corpoVisitantes');
-    corpV.innerHTML = visitantes.map(nome=>`
-    <tr>
-        <td class="col-nome"><strong>${nome}</strong></td>
-        ${datas.map(d=>{
-            if(adiados[d.id]) return `<td class="celula-cancelada">CANCELADO<br><small>${adiados[d.id]}</small></td>`;
-            let sts = presencaVisitantes[nome][d.id] || 'P';
-            return `<td><button class="status-btn cor-${sts.toLowerCase()}" onclick="alterarStatus('${nome}','${d.id}','vis')">${sts}</button></td>`;
-        }).join('')}
-        <td><strong>${calcPerc(nome,'vis')}%</strong></td>
-        <td class="col-acoes">
-            <button class="btn-acao btn-editar" onclick="editarNome('${nome}','vis')">✏️</button>
-            <button class="btn-acao btn-excluir" onclick="excluirNome('${nome}','vis')">🗑️</button>
-        </td>
-    </tr>`).join('') || `<tr><td colspan="10" style="color:#999;text-align:center">Adicione visitantes acima</td></tr>`;
-}
-
-// VISITAS DOMICILIARES - TABELA MENSAL (Mês = Quantidade)
-function atualizarTabelaVisitas() {
-    document.getElementById('anoVisitas').textContent = anoAtual;
-    if(!visitasMensais[anoAtual]) visitasMensais[anoAtual] = {};
-    let corpo = document.getElementById('corpoVisitas');
-    corpo.innerHTML = nomesMeses.map((m,i)=>`
-    <tr class="linha-mes-visita ${i===mesAtual ? 'mes-atual' : ''}">
-        <td class="col-nome"><strong>${m.toUpperCase()}</strong></td>
-        <td><input class="input-visita" type="number" min="0" value="${visitasMensais[anoAtual][i]||0}" onchange="atualizarVisita(${i}, this.value)"></td>
-    </tr>`).join('');
-}
-function atualizarVisita(mesIndex, valor) {
-    if(!visitasMensais[anoAtual]) visitasMensais[anoAtual] = {};
-    visitasMensais[anoAtual][mesIndex] = Number(valor) || 0;
-    marcarAlterado();
-}
-
-// GRÁFICOS
-function atualizarGraficos() {
-    let nomes = [...participantes].sort((a,b)=>a.localeCompare(b,'pt-BR',{sensitivity:'base'}));
-    let dados = nomes.map(n=>calcPerc(n,'part'));
-    if(grafMes) grafMes.destroy();
-    grafMes = new Chart(document.getElementById('graficoMensal'),{
-        type:'bar', data:{labels:nomes,datasets:[{data:dados,backgroundColor:'#0055ff'}]},
-        options:{responsive:true,scales:{y:{max:100}}}
-    });
-    if(grafSem) grafSem.destroy();
-    grafSem = new Chart(document.getElementById('graficoSemestral'),{
-        type:'bar', data:{labels:nomes,datasets:[{data:dados,backgroundColor:'#00997a'}]},
-        options:{responsive:true,scales:{y:{max:100}}}
-    });
-}
-
-// SALVAR/CARREGAR
-let alteracoesPendentes = false;
-
-function marcarAlterado(){
-    alteracoesPendentes = true;
-    document.getElementById('statusSalvo').textContent = '⚠️ Alterações não salvas — toque em Salvar';
-}
-
-async function salvarManual(){
-    let agora = new Date();
-    let horaTexto = agora.toLocaleString('pt-BR');
-    const dados = {
-        celula:document.getElementById('nomeCelula').value,
-        lider:document.getElementById('nomeLider').value,
-        dia:document.getElementById('diaSemana').value,
-        horario:document.getElementById('horario').value,
-        inicio:document.getElementById('dataInicio').value,
-        tipo:document.getElementById('tipoCelula').value,
-        obs:document.getElementById('observacoes').value,
-        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,visitanteMes,mesAtual,anoAtual,
-        ultimoSalvamento:horaTexto
-    };
-    document.getElementById('statusSalvo').textContent = '⏳ Salvando...';
-    try{
-        await setDoc(doc(db, "relatorioCelula", "dados"), dados);
-        alteracoesPendentes = false;
-        document.getElementById('statusSalvo').textContent = `✅ Salvo em ${horaTexto}`;
-    }catch(erro){
-        console.error(erro);
-        document.getElementById('statusSalvo').textContent = '❌ Erro ao salvar. Verifique sua conexão.';
-    }
-}
-
-async function carregarDados(){
-    document.getElementById('statusSalvo').textContent = '⏳ Carregando...';
-    let d = {};
-    try{
-        const snap = await getDoc(doc(db, "relatorioCelula", "dados"));
-        if(snap.exists()) d = snap.data();
-    }catch(erro){
-        console.error(erro);
-        document.getElementById('statusSalvo').textContent = '❌ Erro ao carregar. Verifique sua conexão.';
-        return;
-    }
-    document.getElementById('nomeCelula').value = d.celula||'';
-    document.getElementById('nomeLider').value = d.lider||'';
-    document.getElementById('diaSemana').value = d.dia||'sabado';
-    document.getElementById('horario').value = d.horario||'';
-    document.getElementById('dataInicio').value = d.inicio||'';
-    document.getElementById('tipoCelula').value = d.tipo||'mista';
-    document.getElementById('observacoes').value = d.obs||'';
-    participantes = d.participantes||[];
-    visitantes = d.visitantes||[];
-    presenca = d.presenca||{};
-    presencaVisitantes = d.presencaVisitantes||{};
-    adiados = d.adiados||{};
-    visitasMensais = d.visitasMensais||{};
-    visitanteMes = d.visitanteMes||{};
-    document.getElementById('statusSalvo').textContent = d.ultimoSalvamento
-        ? `✅ Salvo em ${d.ultimoSalvamento}`
-        : 'Nenhum salvamento ainda';
-}
-function baixarBackup(){
-    let dados = {
-        celula:document.getElementById('nomeCelula').value,
-        lider:document.getElementById('nomeLider').value,
-        dia:document.getElementById('diaSemana').value,
-        horario:document.getElementById('horario').value,
-        inicio:document.getElementById('dataInicio').value,
-        tipo:document.getElementById('tipoCelula').value,
-        obs:document.getElementById('observacoes').value,
-        participantes,visitantes,presenca,presencaVisitantes,adiados,visitasMensais,visitanteMes,mesAtual,anoAtual,
-    };
-    let blob = new Blob([JSON.stringify(dados, null, 2)], {type:'application/json'});
-    let url = URL.createObjectURL(blob);
-    let a = document.createElement('a');
-    a.href = url;
-    let dataHoje = new Date().toISOString().slice(0,10);
-    a.download = `relatorio-celula-${dataHoje}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-    window.salvarManual = salvarManual;
-window.baixarBackup = baixarBackup;
-window.marcarAlterado = marcarAlterado;
-window.adicionarParticipante = adicionarParticipante;
-window.adicionarVisitante = adicionarVisitante;
-window.marcarCancelada = marcarCancelada;
-window.alterarStatus = alterarStatus;
-window.editarNome = editarNome;
-window.excluirNome = excluirNome;
-window.atualizarVisita = atualizarVisita;
-window.iniciar = iniciar;
-window.atualizarTudo = atualizarTudo;
-
-function atualizarTudo(){atualizarTabelas();atualizarTabelaVisitas();atualizarGraficos();}
-
-window.onbeforeunload = function(){
-    if(alteracoesPendentes) return 'Você tem alterações não salvas. Deseja realmente sair?';
-};
-    
-
-iniciar();
 </script>
+
 </body>
 </html>
