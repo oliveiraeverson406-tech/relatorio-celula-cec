@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Relatório de Célula - CEC</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b4332">
+<link rel="apple-touch-icon" href="icone-cec.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CEC">
 <style>
   :root{
     --verde-escuro:#1b4332;
@@ -495,6 +501,14 @@ function salvarVisitas(){
   document.getElementById('resumo-visitas').textContent = total;
   localStorage.setItem('celula_visitas_total', total);
   voltarDashboard();
+}
+
+// registra o service worker para o app funcionar instalado, com cache offline
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .catch(err => console.log('Erro ao registrar service worker:', err));
+  });
 }
 </script>
 
