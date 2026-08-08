@@ -96,6 +96,7 @@
   .card.frequencia-consagracao .icon-wrap{ background:#e6eefb; }
   .card.dia-visita .icon-wrap{ background:#fdf1df; }
   .card.lider-treinamento .icon-wrap{ background:#fbe7e2; }
+  .card.visitantes .icon-wrap{ background:#e9f5ea; }
   .card.celula-cancelada .icon-wrap{ background:#f6e3e2; }
 
   .card h2{
@@ -269,6 +270,13 @@
       <div class="metric-label">Nome do discipulador</div>
     </button>
 
+    <button class="card visitantes" onclick="mostrarDetalhe('detalhe-visitantes')">
+      <div class="icon-wrap">🙋</div>
+      <h2>Visitantes</h2>
+      <div class="metric" id="resumo-visitantes">2</div>
+      <div class="metric-label">Visitantes cadastrados</div>
+    </button>
+
     <button class="card celula-cancelada" onclick="mostrarDetalhe('detalhe-cancelada')">
       <div class="icon-wrap">🚫</div>
       <div class="conteudo">
@@ -283,6 +291,12 @@
   <section class="detalhe" id="detalhe-celula">
     <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
     <h3>👥 Frequência de Célula</h3>
+
+    <div style="display:flex; gap:8px; margin-bottom:14px;">
+      <input type="text" id="input-novo-participante" placeholder="Nome do participante" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--borda); font-size:0.9rem;">
+      <button onclick="adicionarParticipante()" style="background:var(--verde); color:#fff; border:none; padding:0 16px; border-radius:8px; font-weight:700; font-size:1.2rem; cursor:pointer;">+</button>
+    </div>
+
     <p class="legenda">🔵 P = Presença &nbsp; 🔴 F = Falta &nbsp; 🟠 FJ = Falta Justificada</p>
     <table>
       <thead><tr>
@@ -290,10 +304,11 @@
         <th>06/09 <span class="lapis" onclick="marcarCancelada('06/09')" title="Marcar como cancelada">✏️</span></th>
         <th>13/09 <span class="lapis" onclick="marcarCancelada('13/09')" title="Marcar como cancelada">✏️</span></th>
         <th>20/09 <span class="lapis" onclick="marcarCancelada('20/09')" title="Marcar como cancelada">✏️</span></th>
+        <th></th>
       </tr></thead>
-      <tbody>
-        <tr><td><span class="nome-participante" id="nome-1">Ana Souza</span> <span class="lapis" onclick="editarNome('nome-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td></tr>
-        <tr><td><span class="nome-participante" id="nome-2">Carlos Lima</span> <span class="lapis" onclick="editarNome('nome-2')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill justificada">FJ</span></td><td><span class="status-pill presente">P</span></td></tr>
+      <tbody id="tabela-celula">
+        <tr><td><span class="nome-participante" id="nome-1">Ana Souza</span> <span class="lapis" onclick="editarNome('nome-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="nome-participante" id="nome-2">Carlos Lima</span> <span class="lapis" onclick="editarNome('nome-2')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill justificada">FJ</span></td><td><span class="status-pill presente">P</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
     <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Toque no ✏️ ao lado da data pra marcar que não teve célula nesse dia — ela sai do cálculo de % e aparece automaticamente em "Células Canceladas".</p>
@@ -332,7 +347,7 @@
     <p class="legenda">🔵 P = Presença &nbsp; 🔴 F = Falta &nbsp; 🟠 FJ = Falta Justificada</p>
     <table id="tabela-consagracao">
       <thead><tr><th>Participante</th><th>06/09</th><th>13/09</th><th>20/09</th><th>27/09</th></tr></thead>
-      <tbody>
+      <tbody id="tbody-consagracao">
         <tr><td><span class="nome-participante">Ana Souza</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td></tr>
         <tr><td><span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td></tr>
       </tbody>
@@ -367,6 +382,26 @@
     <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
     <h3>📣 Líder em Treinamento</h3>
     <p style="font-size:0.9rem; color:var(--texto-suave);">Cadastre aqui o nome do líder em treinamento e o acompanhamento do discipulado.</p>
+  </section>
+
+  <section class="detalhe" id="detalhe-visitantes">
+    <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
+    <h3>🙋 Visitantes</h3>
+
+    <div style="display:flex; gap:8px; margin-bottom:14px;">
+      <input type="text" id="input-novo-visitante" placeholder="Nome do visitante" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--borda); font-size:0.9rem;">
+      <button onclick="adicionarVisitante()" style="background:var(--verde); color:#fff; border:none; padding:0 16px; border-radius:8px; font-weight:700; font-size:1.2rem; cursor:pointer;">+</button>
+    </div>
+
+    <p class="legenda">🔵 P = Presença &nbsp; 🔴 F = Falta &nbsp; 🟠 FJ = Falta Justificada</p>
+    <table>
+      <thead><tr><th>Visitante</th><th>06/09</th><th>13/09</th><th>20/09</th><th></th></tr></thead>
+      <tbody id="tabela-visitantes">
+        <tr><td><span class="nome-participante" id="visitante-1">Márcia Reis</span> <span class="lapis" onclick="editarNomeVisitante('visitante-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill justificada">FJ</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="nome-participante" id="visitante-2">João Pedro</span> <span class="lapis" onclick="editarNomeVisitante('visitante-2')" title="Editar nome">✏️</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Registro de quem visitou a célula, sem contar % de frequência — só o histórico de presença.</p>
   </section>
 
   <section class="detalhe" id="detalhe-cancelada">
@@ -423,6 +458,103 @@ function atualizarResumoDiaHora(){
 }
 
 atualizarResumoDiaHora();
+
+let contadorParticipante = 2; // já existem 2 participantes de exemplo (nome-1, nome-2)
+
+function adicionarParticipante(){
+  const input = document.getElementById('input-novo-participante');
+  const nome = input.value.trim();
+  if(!nome){
+    alert('Digite o nome do participante.');
+    return;
+  }
+  contadorParticipante++;
+  const novoId = 'nome-' + contadorParticipante;
+
+  // adiciona na tabela de Frequência de Célula (com falta em branco por padrão)
+  const linhaCelula = document.createElement('tr');
+  linhaCelula.innerHTML = `
+    <td><span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNome('${novoId}')" title="Editar nome">✏️</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td>
+  `;
+  document.getElementById('tabela-celula').appendChild(linhaCelula);
+
+  // adiciona também na tabela de Consagração, pois são os mesmos participantes
+  const linhaConsagracao = document.createElement('tr');
+  linhaConsagracao.innerHTML = `
+    <td><span class="nome-participante">${nome}</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+  `;
+  document.getElementById('tbody-consagracao').appendChild(linhaConsagracao);
+
+  input.value = '';
+  verificarFaltasConsagracao();
+  // TODO: quando integrado ao app real, ordenar a lista em ordem alfabética
+  // e persistir o novo participante no armazenamento
+}
+
+function excluirParticipante(botao){
+  const linha = botao.closest('tr');
+  const nome = linha.querySelector('.nome-participante').textContent;
+  if(!confirm('Excluir "' + nome + '" da lista de participantes?')) return;
+  linha.remove();
+  // TODO: quando integrado ao app real, remover também a linha
+  // correspondente na tabela de Consagração pelo nome/id do participante
+}
+
+let contadorVisitante = 2; // já existem 2 visitantes de exemplo (visitante-1, visitante-2)
+
+function adicionarVisitante(){
+  const input = document.getElementById('input-novo-visitante');
+  const nome = input.value.trim();
+  if(!nome){
+    alert('Digite o nome do visitante.');
+    return;
+  }
+  contadorVisitante++;
+  const novoId = 'visitante-' + contadorVisitante;
+
+  const linha = document.createElement('tr');
+  linha.innerHTML = `
+    <td><span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNomeVisitante('${novoId}')" title="Editar nome">✏️</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td>
+  `;
+  document.getElementById('tabela-visitantes').appendChild(linha);
+
+  input.value = '';
+  atualizarResumoVisitantes();
+  // TODO: quando integrado ao app real, ordenar em ordem alfabética e persistir
+}
+
+function excluirVisitante(botao){
+  const linha = botao.closest('tr');
+  const nome = linha.querySelector('.nome-participante').textContent;
+  if(!confirm('Excluir "' + nome + '" da lista de visitantes?')) return;
+  linha.remove();
+  atualizarResumoVisitantes();
+}
+
+function editarNomeVisitante(id){
+  const span = document.getElementById(id);
+  const novoNome = prompt('Editar nome do visitante:', span.textContent);
+  if(novoNome === null || novoNome.trim() === '') return;
+  span.textContent = novoNome.trim();
+}
+
+function atualizarResumoVisitantes(){
+  const total = document.querySelectorAll('#tabela-visitantes tr').length;
+  document.getElementById('resumo-visitantes').textContent = total;
+}
+atualizarResumoVisitantes();
 
 function editarNome(id){
   const span = document.getElementById(id);
