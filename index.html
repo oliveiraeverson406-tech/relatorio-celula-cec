@@ -344,12 +344,18 @@
   <section class="detalhe" id="detalhe-consagracao">
     <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
     <h3>🙌 Frequência de Consagração</h3>
+
+    <div style="display:flex; gap:8px; margin-bottom:14px;">
+      <input type="text" id="input-novo-consagracao" placeholder="Nome do participante" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--borda); font-size:0.9rem;">
+      <button onclick="adicionarParticipanteConsagracao()" style="background:var(--verde); color:#fff; border:none; padding:0 16px; border-radius:8px; font-weight:700; font-size:1.2rem; cursor:pointer;">+</button>
+    </div>
+
     <p class="legenda">🔵 P = Presença &nbsp; 🔴 F = Falta &nbsp; 🟠 FJ = Falta Justificada</p>
     <table id="tabela-consagracao">
-      <thead><tr><th>Participante</th><th>06/09</th><th>13/09</th><th>20/09</th><th>27/09</th></tr></thead>
+      <thead><tr><th>Participante</th><th>06/09</th><th>13/09</th><th>20/09</th><th>27/09</th><th></th></tr></thead>
       <tbody id="tbody-consagracao">
-        <tr><td><span class="nome-participante">Ana Souza</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td></tr>
-        <tr><td><span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td></tr>
+        <tr><td><span class="nome-participante">Ana Souza</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
   </section>
@@ -562,6 +568,36 @@ function editarNome(id){
   if(novoNome === null || novoNome.trim() === '') return; // cancelou ou deixou vazio
   span.textContent = novoNome.trim();
   // o histórico de presença da linha não é alterado, só o nome
+}
+
+function adicionarParticipanteConsagracao(){
+  const input = document.getElementById('input-novo-consagracao');
+  const nome = input.value.trim();
+  if(!nome){
+    alert('Digite o nome do participante.');
+    return;
+  }
+  const linha = document.createElement('tr');
+  linha.innerHTML = `
+    <td><span class="nome-participante">${nome}</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta">F</span></td>
+    <td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td>
+  `;
+  document.getElementById('tbody-consagracao').appendChild(linha);
+  input.value = '';
+  verificarFaltasConsagracao();
+  // TODO: quando integrado ao app real, adicionar também na tabela de
+  // Frequência de Célula, já que são os mesmos participantes
+}
+
+function excluirParticipanteConsagracao(botao){
+  const linha = botao.closest('tr');
+  const nome = linha.querySelector('.nome-participante').textContent;
+  if(!confirm('Excluir "' + nome + '" da lista de participantes?')) return;
+  linha.remove();
 }
 
 function verificarFaltasConsagracao(){
