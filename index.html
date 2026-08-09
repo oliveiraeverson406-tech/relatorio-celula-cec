@@ -182,6 +182,11 @@
     font-size:0.78rem;
     font-weight:600;
     color:#fff;
+    cursor:pointer;
+    user-select:none;
+  }
+  .status-pill:active{
+    opacity:0.7;
   }
   .status-pill.presente{ background:var(--azul); }
   .status-pill.falta{ background:var(--vermelho); }
@@ -332,8 +337,8 @@
         <th></th>
       </tr></thead>
       <tbody id="tabela-celula">
-        <tr><td><span class="nome-participante" id="nome-1">Ana Souza</span> <span class="lapis" onclick="editarNome('nome-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
-        <tr><td><span class="nome-participante" id="nome-2">Carlos Lima</span> <span class="lapis" onclick="editarNome('nome-2')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill justificada">FJ</span></td><td><span class="status-pill presente">P</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="nome-participante" id="nome-1">Ana Souza</span> <span class="lapis" onclick="editarNome('nome-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="nome-participante" id="nome-2">Carlos Lima</span> <span class="lapis" onclick="editarNome('nome-2')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill justificada" onclick="alternarPresenca(this)">FJ</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
     <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Toque no ✏️ ao lado da data pra marcar que não teve célula nesse dia — ela sai do cálculo de % e aparece automaticamente em "Células Canceladas".</p>
@@ -420,8 +425,8 @@
     <table id="tabela-consagracao">
       <thead id="thead-consagracao"><tr><th>Participante</th><th>06/09</th><th>13/09</th><th>20/09</th><th>27/09</th><th></th></tr></thead>
       <tbody id="tbody-consagracao">
-        <tr><td><span class="nome-participante">Ana Souza</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
-        <tr><td><span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="nome-participante">Ana Souza</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
     <button onclick="salvarEstado(true)" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer; margin-top:14px; width:100%;">💾 Salvar</button>
@@ -482,8 +487,8 @@
     <table>
       <thead><tr><th>Visitante</th><th>06/09</th><th>13/09</th><th>20/09</th><th></th></tr></thead>
       <tbody id="tabela-visitantes">
-        <tr><td><span class="nome-participante" id="visitante-1">Márcia Reis</span> <span class="lapis" onclick="editarNomeVisitante('visitante-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill justificada">FJ</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
-        <tr><td><span class="nome-participante" id="visitante-2">João Pedro</span> <span class="lapis" onclick="editarNomeVisitante('visitante-2')" title="Editar nome">✏️</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="nome-participante" id="visitante-1">Márcia Reis</span> <span class="lapis" onclick="editarNomeVisitante('visitante-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill justificada" onclick="alternarPresenca(this)">FJ</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="nome-participante" id="visitante-2">João Pedro</span> <span class="lapis" onclick="editarNomeVisitante('visitante-2')" title="Editar nome">✏️</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
     <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Registro de quem visitou a célula, sem contar % de frequência — só o histórico de presença.</p>
@@ -621,9 +626,9 @@ function adicionarParticipante(){
   const linhaCelula = document.createElement('tr');
   linhaCelula.innerHTML = `
     <td><span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNome('${novoId}')" title="Editar nome">✏️</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
     <td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tabela-celula').appendChild(linhaCelula);
@@ -632,10 +637,10 @@ function adicionarParticipante(){
   const linhaConsagracao = document.createElement('tr');
   linhaConsagracao.innerHTML = `
     <td><span class="nome-participante">${nome}</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
   `;
   document.getElementById('tbody-consagracao').appendChild(linhaConsagracao);
 
@@ -671,9 +676,9 @@ function adicionarVisitante(){
   const linha = document.createElement('tr');
   linha.innerHTML = `
     <td><span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNomeVisitante('${novoId}')" title="Editar nome">✏️</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
     <td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tabela-visitantes').appendChild(linha);
@@ -726,10 +731,10 @@ function adicionarParticipanteConsagracao(){
   const linha = document.createElement('tr');
   linha.innerHTML = `
     <td><span class="nome-participante">${nome}</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
-    <td><span class="status-pill falta">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
     <td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tbody-consagracao').appendChild(linha);
@@ -745,6 +750,22 @@ function excluirParticipanteConsagracao(botao){
   const nome = linha.querySelector('.nome-participante').textContent;
   if(!confirm('Excluir "' + nome + '" da lista de participantes?')) return;
   linha.remove();
+  salvarEstado();
+}
+
+const ORDEM_PRESENCA = ['presente', 'falta', 'justificada'];
+const TEXTO_PRESENCA = {presente:'P', falta:'F', justificada:'FJ'};
+
+function alternarPresenca(elemento){
+  const atual = ORDEM_PRESENCA.find(c => elemento.classList.contains(c)) || 'falta';
+  const proximoIndex = (ORDEM_PRESENCA.indexOf(atual) + 1) % ORDEM_PRESENCA.length;
+  const proximo = ORDEM_PRESENCA[proximoIndex];
+
+  elemento.classList.remove(atual);
+  elemento.classList.add(proximo);
+  elemento.textContent = TEXTO_PRESENCA[proximo];
+
+  verificarFaltasConsagracao();
   salvarEstado();
 }
 
@@ -884,7 +905,7 @@ function ajustarPillsLinha(linha, totalColunas){
     const celulaExcluir = linha.lastElementChild;
     for(let i=0; i<diferenca; i++){
       const td = document.createElement('td');
-      td.innerHTML = '<span class="status-pill falta">F</span>';
+      td.innerHTML = '<span class="status-pill falta" onclick="alternarPresenca(this)">F</span>';
       linha.insertBefore(td, celulaExcluir);
     }
   } else if(diferenca < 0){
@@ -970,7 +991,7 @@ function construirLinhaComPills(nome, pills, comExcluir, funcaoExcluir, idNome, 
   html += '</td>';
   pills.forEach(sigla=>{
     const classe = SIGLA_PARA_CLASSE[sigla] || 'falta';
-    html += `<td><span class="status-pill ${classe}">${sigla}</span></td>`;
+    html += `<td><span class="status-pill ${classe}" onclick="alternarPresenca(this)">${sigla}</span></td>`;
   });
   if(comExcluir){
     html += `<td><span class="lapis" onclick="${funcaoExcluir}(this)" title="Excluir">🗑️</span></td>`;
