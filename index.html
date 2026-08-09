@@ -478,6 +478,16 @@
     <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
     <h3>🙋 Visitantes</h3>
 
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Mês de referência</label>
+      <select class="input-mes-referencia" onchange="mudarMesReferencia(this.value)" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+        <option value="Janeiro">Janeiro</option><option value="Fevereiro">Fevereiro</option><option value="Março">Março</option>
+        <option value="Abril">Abril</option><option value="Maio">Maio</option><option value="Junho">Junho</option>
+        <option value="Julho">Julho</option><option value="Agosto">Agosto</option><option value="Setembro" selected>Setembro</option>
+        <option value="Outubro">Outubro</option><option value="Novembro">Novembro</option><option value="Dezembro">Dezembro</option>
+      </select>
+    </div>
+
     <div style="display:flex; gap:8px; margin-bottom:14px;">
       <input type="text" id="input-novo-visitante" placeholder="Nome do visitante" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--borda); font-size:0.9rem;">
       <button onclick="adicionarVisitante()" style="background:var(--verde); color:#fff; border:none; padding:0 16px; border-radius:8px; font-weight:700; font-size:1.2rem; cursor:pointer;">+</button>
@@ -485,7 +495,7 @@
 
     <p class="legenda">🔵 P = Presença &nbsp; 🔴 F = Falta &nbsp; 🟠 FJ = Falta Justificada</p>
     <table>
-      <thead><tr><th>Visitante</th><th>06/09</th><th>13/09</th><th>20/09</th><th></th></tr></thead>
+      <thead id="thead-visitantes"><tr><th>Visitante</th><th>06/09</th><th>13/09</th><th>20/09</th><th></th></tr></thead>
       <tbody id="tabela-visitantes">
         <tr><td><span class="nome-participante" id="visitante-1">Márcia Reis</span> <span class="lapis" onclick="editarNomeVisitante('visitante-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill justificada" onclick="alternarPresenca(this)">FJ</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
         <tr><td><span class="nome-participante" id="visitante-2">João Pedro</span> <span class="lapis" onclick="editarNomeVisitante('visitante-2')" title="Editar nome">✏️</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
@@ -612,6 +622,20 @@ atualizarResumoDiaHora();
 
 let contadorParticipante = 2; // já existem 2 participantes de exemplo (nome-1, nome-2)
 
+function contarColunasDatas(theadId){
+  // conta quantas colunas de data existem no cabeçalho (th com data, sem contar Participante nem a coluna vazia do fim)
+  const ths = document.querySelectorAll('#' + theadId + ' th');
+  return Math.max(0, ths.length - 2); // -1 Participante, -1 coluna vazia do excluir
+}
+
+function gerarPillsFalta(qtd){
+  let html = '';
+  for(let i=0; i<qtd; i++){
+    html += '<td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>';
+  }
+  return html;
+}
+
 function adicionarParticipante(){
   const input = document.getElementById('input-novo-participante');
   const nome = input.value.trim();
@@ -621,26 +645,24 @@ function adicionarParticipante(){
   }
   contadorParticipante++;
   const novoId = 'nome-' + contadorParticipante;
+  const qtdColunas = contarColunasDatas('thead-celula');
 
   // adiciona na tabela de Frequência de Célula (com falta em branco por padrão)
   const linhaCelula = document.createElement('tr');
   linhaCelula.innerHTML = `
     <td><span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNome('${novoId}')" title="Editar nome">✏️</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    ${gerarPillsFalta(qtdColunas)}
     <td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tabela-celula').appendChild(linhaCelula);
 
   // adiciona também na tabela de Consagração, pois são os mesmos participantes
+  const qtdColunasConsagracao = contarColunasDatas('thead-consagracao');
   const linhaConsagracao = document.createElement('tr');
   linhaConsagracao.innerHTML = `
     <td><span class="nome-participante">${nome}</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    ${gerarPillsFalta(qtdColunasConsagracao)}
+    <td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tbody-consagracao').appendChild(linhaConsagracao);
 
@@ -672,13 +694,12 @@ function adicionarVisitante(){
   }
   contadorVisitante++;
   const novoId = 'visitante-' + contadorVisitante;
+  const qtdColunas = contarColunasDatas('thead-visitantes');
 
   const linha = document.createElement('tr');
   linha.innerHTML = `
     <td><span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNomeVisitante('${novoId}')" title="Editar nome">✏️</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    ${gerarPillsFalta(qtdColunas)}
     <td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tabela-visitantes').appendChild(linha);
@@ -728,13 +749,11 @@ function adicionarParticipanteConsagracao(){
     alert('Digite o nome do participante.');
     return;
   }
+  const qtdColunas = contarColunasDatas('thead-consagracao');
   const linha = document.createElement('tr');
   linha.innerHTML = `
     <td><span class="nome-participante">${nome}</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
-    <td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>
+    ${gerarPillsFalta(qtdColunas)}
     <td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tbody-consagracao').appendChild(linha);
@@ -927,6 +946,9 @@ function atualizarColunasDatas(){
 
   reconstruirCabecalhoDatas('thead-consagracao', datas, false);
   document.querySelectorAll('#tbody-consagracao tr').forEach(l => ajustarPillsLinha(l, datas.length));
+
+  reconstruirCabecalhoDatas('thead-visitantes', datas, false);
+  document.querySelectorAll('#tabela-visitantes tr').forEach(l => ajustarPillsLinha(l, datas.length));
 
   verificarFaltasConsagracao();
 }
