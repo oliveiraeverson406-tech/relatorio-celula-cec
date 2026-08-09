@@ -234,6 +234,17 @@
 </header>
 
 <main id="main-dashboard">
+
+  <div style="background:#fff; border:1px solid var(--borda); border-radius:16px; padding:16px; margin-bottom:16px;">
+    <h3 style="font-size:0.95rem; color:var(--verde-escuro); margin-bottom:10px;">💾 Backup dos Dados</h3>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button onclick="baixarBackup()" style="flex:1; min-width:140px; background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.85rem; cursor:pointer;">Salvar backup (.json)</button>
+      <button onclick="document.getElementById('input-restaurar-backup').click()" style="flex:1; min-width:140px; background:#fff; color:var(--verde); border:1px solid var(--verde); padding:12px; border-radius:8px; font-weight:700; font-size:0.85rem; cursor:pointer;">Restaurar backup</button>
+      <input type="file" id="input-restaurar-backup" accept="application/json" style="display:none;" onchange="restaurarBackup(this.files[0])">
+    </div>
+    <p style="font-size:0.76rem; color:var(--texto-suave); margin-top:8px;">O backup (.json) salva tudo e pode ser restaurado depois. Faça isso periodicamente pra não depender só do armazenamento do celular.</p>
+  </div>
+
   <div class="grid">
 
     <button class="card frequencia-celula" onclick="mostrarDetalhe('detalhe-celula')">
@@ -313,6 +324,7 @@
       </tbody>
     </table>
     <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Toque no ✏️ ao lado da data pra marcar que não teve célula nesse dia — ela sai do cálculo de % e aparece automaticamente em "Células Canceladas".</p>
+    <button onclick="salvarEstado(true)" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer; margin-top:12px; width:100%;">💾 Salvar</button>
   </section>
 
   <section class="detalhe" id="detalhe-dados-celula">
@@ -389,6 +401,7 @@
         <tr><td><span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
+    <button onclick="salvarEstado(true)" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer; margin-top:14px; width:100%;">💾 Salvar</button>
   </section>
 
   <section class="detalhe" id="detalhe-visitas">
@@ -439,6 +452,7 @@
       </tbody>
     </table>
     <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Registro de quem visitou a célula, sem contar % de frequência — só o histórico de presença.</p>
+    <button onclick="salvarEstado(true)" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer; margin-top:12px; width:100%;">💾 Salvar</button>
   </section>
 
   <section class="detalhe" id="detalhe-cancelada">
@@ -451,6 +465,7 @@
         <tr><td>27/09</td><td class="motivo-texto">Chuva forte</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td></tr>
       </tbody>
     </table>
+    <button onclick="salvarEstado(true)" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer; margin-top:14px; width:100%;">💾 Salvar</button>
   </section>
 
 </main>
@@ -483,6 +498,7 @@ function salvarDadosCelula(){
   localStorage.setItem('celula_tipo', tipo);
 
   atualizarResumoDadosCelula();
+  salvarEstado();
   voltarDashboard();
 }
 
@@ -514,6 +530,7 @@ function salvarDiaHora(){
   localStorage.setItem('celula_dia_semana', dia);
   localStorage.setItem('celula_horario', hora);
   atualizarResumoDiaHora();
+  salvarEstado();
   voltarDashboard();
   // TODO: quando integrado ao app real, aqui deve recalcular as colunas
   // de sábado/dia-da-semana das tabelas de Frequência e Consagração
@@ -569,6 +586,7 @@ function adicionarParticipante(){
 
   input.value = '';
   verificarFaltasConsagracao();
+  salvarEstado();
   // TODO: quando integrado ao app real, ordenar a lista em ordem alfabética
   // e persistir o novo participante no armazenamento
 }
@@ -578,6 +596,7 @@ function excluirParticipante(botao){
   const nome = linha.querySelector('.nome-participante').textContent;
   if(!confirm('Excluir "' + nome + '" da lista de participantes?')) return;
   linha.remove();
+  salvarEstado();
   // TODO: quando integrado ao app real, remover também a linha
   // correspondente na tabela de Consagração pelo nome/id do participante
 }
@@ -606,6 +625,7 @@ function adicionarVisitante(){
 
   input.value = '';
   atualizarResumoVisitantes();
+  salvarEstado();
   // TODO: quando integrado ao app real, ordenar em ordem alfabética e persistir
 }
 
@@ -615,6 +635,7 @@ function excluirVisitante(botao){
   if(!confirm('Excluir "' + nome + '" da lista de visitantes?')) return;
   linha.remove();
   atualizarResumoVisitantes();
+  salvarEstado();
 }
 
 function editarNomeVisitante(id){
@@ -622,6 +643,7 @@ function editarNomeVisitante(id){
   const novoNome = prompt('Editar nome do visitante:', span.textContent);
   if(novoNome === null || novoNome.trim() === '') return;
   span.textContent = novoNome.trim();
+  salvarEstado();
 }
 
 function atualizarResumoVisitantes(){
@@ -635,6 +657,7 @@ function editarNome(id){
   const novoNome = prompt('Editar nome do participante:', span.textContent);
   if(novoNome === null || novoNome.trim() === '') return; // cancelou ou deixou vazio
   span.textContent = novoNome.trim();
+  salvarEstado();
   // o histórico de presença da linha não é alterado, só o nome
 }
 
@@ -657,6 +680,7 @@ function adicionarParticipanteConsagracao(){
   document.getElementById('tbody-consagracao').appendChild(linha);
   input.value = '';
   verificarFaltasConsagracao();
+  salvarEstado();
   // TODO: quando integrado ao app real, adicionar também na tabela de
   // Frequência de Célula, já que são os mesmos participantes
 }
@@ -666,6 +690,7 @@ function excluirParticipanteConsagracao(botao){
   const nome = linha.querySelector('.nome-participante').textContent;
   if(!confirm('Excluir "' + nome + '" da lista de participantes?')) return;
   linha.remove();
+  salvarEstado();
 }
 
 function verificarFaltasConsagracao(){
@@ -697,6 +722,7 @@ function marcarCancelada(data){
 
   atualizarResumoCanceladas();
 
+  salvarEstado();
   alert(data + ' marcada como célula cancelada. Toque no ✏️ na lista de "Células Canceladas" pra justificar o motivo.');
 }
 
@@ -707,6 +733,7 @@ function justificarCancelamento(botao){
   const motivo = prompt('Motivo do cancelamento:', atual);
   if(motivo === null) return;
   celulaMotivo.textContent = motivo.trim() || '—';
+  salvarEstado();
 }
 
 function atualizarResumoCanceladas(){
@@ -736,8 +763,207 @@ function salvarVisitas(){
   inputs.forEach(i => total += parseInt(i.value || '0'));
   document.getElementById('resumo-visitas').textContent = total;
   localStorage.setItem('celula_visitas_total', total);
+  salvarEstado();
   voltarDashboard();
 }
+
+// ---------- Sistema de salvar / carregar / backup ----------
+
+const CLASSE_PARA_SIGLA = {presente:'P', falta:'F', justificada:'FJ'};
+const SIGLA_PARA_CLASSE = {P:'presente', F:'falta', FJ:'justificada'};
+
+function lerLinhasTabela(tbodyId){
+  const linhas = document.querySelectorAll('#' + tbodyId + ' tr');
+  const dados = [];
+  linhas.forEach(l=>{
+    const nome = l.querySelector('.nome-participante')?.textContent || '';
+    const pills = Array.from(l.querySelectorAll('.status-pill')).map(p=>{
+      const classe = ['presente','falta','justificada'].find(c=>p.classList.contains(c));
+      return CLASSE_PARA_SIGLA[classe] || 'F';
+    });
+    dados.push({nome, pills});
+  });
+  return dados;
+}
+
+function coletarEstado(){
+  const visitas = {};
+  document.querySelectorAll('#tabela-visitas .input-qtd').forEach(i=>{
+    visitas[i.dataset.mes] = i.value || '0';
+  });
+  const canceladas = [];
+  document.querySelectorAll('#tabela-canceladas tr').forEach(l=>{
+    canceladas.push({
+      data: l.children[0].textContent.trim(),
+      motivo: l.querySelector('.motivo-texto').textContent.trim()
+    });
+  });
+  return {
+    dadosCelula: {
+      nome: localStorage.getItem('celula_nome') || '',
+      lider: localStorage.getItem('celula_lider') || '',
+      endereco: localStorage.getItem('celula_endereco') || '',
+      tipo: localStorage.getItem('celula_tipo') || 'Mista'
+    },
+    diaHora: {
+      dia: localStorage.getItem('celula_dia_semana') || '6',
+      hora: localStorage.getItem('celula_horario') || '19:30'
+    },
+    frequenciaCelula: lerLinhasTabela('tabela-celula'),
+    consagracao: lerLinhasTabela('tbody-consagracao'),
+    visitantes: lerLinhasTabela('tabela-visitantes'),
+    canceladas: canceladas,
+    visitas: visitas
+  };
+}
+
+function construirLinhaComPills(nome, pills, comExcluir, funcaoExcluir, idNome, funcaoEditar){
+  let html = '<td>';
+  if(idNome){
+    html += `<span class="nome-participante" id="${idNome}">${nome}</span> <span class="lapis" onclick="${funcaoEditar}('${idNome}')" title="Editar nome">✏️</span>`;
+  } else {
+    html += `<span class="nome-participante">${nome}</span>`;
+  }
+  html += '</td>';
+  pills.forEach(sigla=>{
+    const classe = SIGLA_PARA_CLASSE[sigla] || 'falta';
+    html += `<td><span class="status-pill ${classe}">${sigla}</span></td>`;
+  });
+  if(comExcluir){
+    html += `<td><span class="lapis" onclick="${funcaoExcluir}(this)" title="Excluir">🗑️</span></td>`;
+  }
+  return html;
+}
+
+function aplicarEstado(estado){
+  if(!estado) return;
+
+  // dados da célula
+  if(estado.dadosCelula){
+    localStorage.setItem('celula_nome', estado.dadosCelula.nome || '');
+    localStorage.setItem('celula_lider', estado.dadosCelula.lider || '');
+    localStorage.setItem('celula_endereco', estado.dadosCelula.endereco || '');
+    localStorage.setItem('celula_tipo', estado.dadosCelula.tipo || 'Mista');
+  }
+  if(estado.diaHora){
+    localStorage.setItem('celula_dia_semana', estado.diaHora.dia);
+    localStorage.setItem('celula_horario', estado.diaHora.hora);
+  }
+
+  // frequência de célula
+  if(estado.frequenciaCelula){
+    const tbody = document.getElementById('tabela-celula');
+    tbody.innerHTML = '';
+    estado.frequenciaCelula.forEach((p, i)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = construirLinhaComPills(p.nome, p.pills, true, 'excluirParticipante', 'nome-'+(i+1), 'editarNome');
+      tbody.appendChild(tr);
+    });
+    contadorParticipante = estado.frequenciaCelula.length;
+  }
+
+  // consagração
+  if(estado.consagracao){
+    const tbody = document.getElementById('tbody-consagracao');
+    tbody.innerHTML = '';
+    estado.consagracao.forEach(p=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = construirLinhaComPills(p.nome, p.pills, true, 'excluirParticipanteConsagracao');
+      tbody.appendChild(tr);
+    });
+  }
+
+  // visitantes
+  if(estado.visitantes){
+    const tbody = document.getElementById('tabela-visitantes');
+    tbody.innerHTML = '';
+    estado.visitantes.forEach((p, i)=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = construirLinhaComPills(p.nome, p.pills, true, 'excluirVisitante', 'visitante-'+(i+1), 'editarNomeVisitante');
+      tbody.appendChild(tr);
+    });
+    contadorVisitante = estado.visitantes.length;
+  }
+
+  // canceladas
+  if(estado.canceladas){
+    const tbody = document.getElementById('tabela-canceladas');
+    tbody.innerHTML = '';
+    estado.canceladas.forEach(c=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${c.data}</td><td class="motivo-texto">${c.motivo}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // visitas por mês
+  if(estado.visitas){
+    document.querySelectorAll('#tabela-visitas .input-qtd').forEach(i=>{
+      if(estado.visitas[i.dataset.mes] !== undefined){
+        i.value = estado.visitas[i.dataset.mes];
+      }
+    });
+    let total = 0;
+    Object.values(estado.visitas).forEach(v => total += parseInt(v || '0'));
+    document.getElementById('resumo-visitas').textContent = total;
+  }
+
+  atualizarResumoDadosCelula();
+  atualizarResumoDiaHora();
+  atualizarResumoCanceladas();
+  atualizarResumoVisitantes();
+  verificarFaltasConsagracao();
+}
+
+function salvarEstado(mostrarAlerta){
+  const estado = coletarEstado();
+  localStorage.setItem('celula_estado_completo', JSON.stringify(estado));
+  if(mostrarAlerta) alert('Dados salvos com sucesso!');
+}
+
+function carregarEstadoSalvo(){
+  const salvo = localStorage.getItem('celula_estado_completo');
+  if(salvo){
+    try{
+      aplicarEstado(JSON.parse(salvo));
+    }catch(e){
+      console.log('Erro ao carregar dados salvos:', e);
+    }
+  }
+}
+
+function baixarBackup(){
+  const estado = coletarEstado();
+  const blob = new Blob([JSON.stringify(estado, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dataHoje = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `backup-celula-${dataHoje}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function restaurarBackup(arquivo){
+  if(!arquivo) return;
+  const leitor = new FileReader();
+  leitor.onload = (e)=>{
+    try{
+      const estado = JSON.parse(e.target.result);
+      aplicarEstado(estado);
+      salvarEstado();
+      alert('Backup restaurado com sucesso!');
+    }catch(err){
+      alert('Não consegui ler esse arquivo. Confirme que é um backup (.json) válido.');
+    }
+  };
+  leitor.readAsText(arquivo);
+}
+
+// carrega os dados salvos assim que o app abre
+carregarEstadoSalvo();
 
 // registra o service worker para o app funcionar instalado, com cache offline
 if('serviceWorker' in navigator){
