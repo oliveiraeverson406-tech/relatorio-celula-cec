@@ -225,11 +225,12 @@
 <header>
   <h1>📋 Relatório de Célula</h1>
   <p>Assembleia de Deus · Acompanhamento mensal</p>
-  <div class="celula-info">
-    <span><strong>Célula:</strong> —</span>
-    <span><strong>Líder:</strong> —</span>
+  <div class="celula-info" onclick="mostrarDetalhe('detalhe-dados-celula')" style="cursor:pointer;">
+    <span id="header-nome-celula"><strong>Célula:</strong> —</span>
+    <span id="header-lider"><strong>Líder:</strong> —</span>
     <span id="header-dia-hora"><strong>Sábados, 19h30</strong></span>
   </div>
+  <div id="header-endereco-tipo" style="margin-top:8px; font-size:0.82rem; opacity:0.85;"></div>
 </header>
 
 <main id="main-dashboard">
@@ -312,6 +313,36 @@
       </tbody>
     </table>
     <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Toque no ✏️ ao lado da data pra marcar que não teve célula nesse dia — ela sai do cálculo de % e aparece automaticamente em "Células Canceladas".</p>
+  </section>
+
+  <section class="detalhe" id="detalhe-dados-celula">
+    <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
+    <h3>📋 Dados da Célula</h3>
+    <div style="display:flex; flex-direction:column; gap:12px; max-width:360px;">
+      <div>
+        <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Nome da célula</label>
+        <input type="text" id="input-nome-celula" placeholder="Ex: Célula Vida Nova" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+      </div>
+      <div>
+        <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Líder</label>
+        <input type="text" id="input-lider" placeholder="Nome do líder" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+      </div>
+      <div>
+        <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Endereço</label>
+        <input type="text" id="input-endereco" placeholder="Rua, número, bairro" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+      </div>
+      <div>
+        <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Tipo da célula</label>
+        <select id="input-tipo-celula" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+          <option value="Mista" selected>Mista</option>
+          <option value="Masculina">Masculina</option>
+          <option value="Feminina">Feminina</option>
+          <option value="Jovens">Jovens</option>
+          <option value="Adolescentes">Adolescentes</option>
+        </select>
+      </div>
+      <button onclick="salvarDadosCelula()" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer;">Salvar</button>
+    </div>
   </section>
 
   <section class="detalhe" id="detalhe-dia-hora">
@@ -439,6 +470,43 @@ function voltarDashboard(){
 
 const DIAS_SEMANA = ['Domingos','Segundas-feiras','Terças-feiras','Quartas-feiras','Quintas-feiras','Sextas-feiras','Sábados'];
 const DIAS_SEMANA_SINGULAR = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+
+function salvarDadosCelula(){
+  const nome = document.getElementById('input-nome-celula').value.trim();
+  const lider = document.getElementById('input-lider').value.trim();
+  const endereco = document.getElementById('input-endereco').value.trim();
+  const tipo = document.getElementById('input-tipo-celula').value;
+
+  localStorage.setItem('celula_nome', nome);
+  localStorage.setItem('celula_lider', lider);
+  localStorage.setItem('celula_endereco', endereco);
+  localStorage.setItem('celula_tipo', tipo);
+
+  atualizarResumoDadosCelula();
+  voltarDashboard();
+}
+
+function atualizarResumoDadosCelula(){
+  const nome = localStorage.getItem('celula_nome') || '';
+  const lider = localStorage.getItem('celula_lider') || '';
+  const endereco = localStorage.getItem('celula_endereco') || '';
+  const tipo = localStorage.getItem('celula_tipo') || 'Mista';
+
+  document.getElementById('header-nome-celula').innerHTML = `<strong>Célula:</strong> ${nome || '—'}`;
+  document.getElementById('header-lider').innerHTML = `<strong>Líder:</strong> ${lider || '—'}`;
+
+  const linhaExtra = document.getElementById('header-endereco-tipo');
+  const partes = [];
+  partes.push('🏷️ ' + tipo);
+  if(endereco) partes.push('📍 ' + endereco);
+  linhaExtra.textContent = partes.join('  ·  ');
+
+  document.getElementById('input-nome-celula').value = nome;
+  document.getElementById('input-lider').value = lider;
+  document.getElementById('input-endereco').value = endereco;
+  document.getElementById('input-tipo-celula').value = tipo;
+}
+atualizarResumoDadosCelula();
 
 function salvarDiaHora(){
   const dia = document.getElementById('input-dia-semana').value;
