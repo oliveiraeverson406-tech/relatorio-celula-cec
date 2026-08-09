@@ -281,8 +281,8 @@
     <button class="card lider-treinamento" onclick="mostrarDetalhe('detalhe-treinamento')">
       <div class="icon-wrap">📣</div>
       <h2>Líder em Treinamento</h2>
-      <div class="metric">—</div>
-      <div class="metric-label">Nome do discipulador</div>
+      <div class="metric" id="resumo-lider-treinamento" style="font-size:1.3rem;">—</div>
+      <div class="metric-label" id="resumo-discipulador">Nome do discipulador</div>
     </button>
 
     <button class="card visitantes" onclick="mostrarDetalhe('detalhe-visitantes')">
@@ -454,7 +454,19 @@
   <section class="detalhe" id="detalhe-treinamento">
     <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
     <h3>📣 Líder em Treinamento</h3>
-    <p style="font-size:0.9rem; color:var(--texto-suave);">Cadastre aqui o nome do líder em treinamento e o acompanhamento do discipulado.</p>
+    <p style="font-size:0.9rem; color:var(--texto-suave); margin-bottom:14px;">Cadastre aqui o nome do líder em treinamento e o acompanhamento do discipulado.</p>
+
+    <div style="display:flex; flex-direction:column; gap:12px; max-width:360px;">
+      <div>
+        <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Nome do líder em treinamento</label>
+        <input type="text" id="input-lider-treinamento" placeholder="Nome" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+      </div>
+      <div>
+        <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Nome do discipulador</label>
+        <input type="text" id="input-discipulador" placeholder="Nome" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+      </div>
+      <button onclick="salvarLiderTreinamento()" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer;">💾 Salvar</button>
+    </div>
   </section>
 
   <section class="detalhe" id="detalhe-visitantes">
@@ -508,6 +520,26 @@ function voltarDashboard(){
 
 const DIAS_SEMANA = ['Domingos','Segundas-feiras','Terças-feiras','Quartas-feiras','Quintas-feiras','Sextas-feiras','Sábados'];
 const DIAS_SEMANA_SINGULAR = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+
+function salvarLiderTreinamento(){
+  const lider = document.getElementById('input-lider-treinamento').value.trim();
+  const discipulador = document.getElementById('input-discipulador').value.trim();
+  localStorage.setItem('celula_lider_treinamento', lider);
+  localStorage.setItem('celula_discipulador', discipulador);
+  atualizarResumoLiderTreinamento();
+  salvarEstado();
+  voltarDashboard();
+}
+
+function atualizarResumoLiderTreinamento(){
+  const lider = localStorage.getItem('celula_lider_treinamento') || '';
+  const discipulador = localStorage.getItem('celula_discipulador') || '';
+  document.getElementById('resumo-lider-treinamento').textContent = lider || '—';
+  document.getElementById('resumo-discipulador').textContent = discipulador ? ('Discipulador: ' + discipulador) : 'Nome do discipulador';
+  document.getElementById('input-lider-treinamento').value = lider;
+  document.getElementById('input-discipulador').value = discipulador;
+}
+atualizarResumoLiderTreinamento();
 
 function salvarDadosCelula(){
   const nome = document.getElementById('input-nome-celula').value.trim();
@@ -916,6 +948,10 @@ function coletarEstado(){
       hora: localStorage.getItem('celula_horario') || '19:30'
     },
     mesReferencia: localStorage.getItem('celula_mes_referencia') || 'Setembro',
+    liderTreinamento: {
+      lider: localStorage.getItem('celula_lider_treinamento') || '',
+      discipulador: localStorage.getItem('celula_discipulador') || ''
+    },
     frequenciaCelula: lerLinhasTabela('tabela-celula'),
     consagracao: lerLinhasTabela('tbody-consagracao'),
     visitantes: lerLinhasTabela('tabela-visitantes'),
@@ -958,6 +994,10 @@ function aplicarEstado(estado){
   }
   if(estado.mesReferencia){
     localStorage.setItem('celula_mes_referencia', estado.mesReferencia);
+  }
+  if(estado.liderTreinamento){
+    localStorage.setItem('celula_lider_treinamento', estado.liderTreinamento.lider || '');
+    localStorage.setItem('celula_discipulador', estado.liderTreinamento.discipulador || '');
   }
 
   // frequência de célula
@@ -1023,6 +1063,7 @@ function aplicarEstado(estado){
   aplicarMesReferenciaSalvo();
   atualizarResumoCanceladas();
   atualizarResumoVisitantes();
+  atualizarResumoLiderTreinamento();
   verificarFaltasConsagracao();
 }
 
