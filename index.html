@@ -321,7 +321,7 @@
 
     <p class="legenda">🔵 P = Presença &nbsp; 🔴 F = Falta &nbsp; 🟠 FJ = Falta Justificada</p>
     <table>
-      <thead><tr>
+      <thead id="thead-celula"><tr>
         <th>Participante</th>
         <th>06/09 <span class="lapis" onclick="marcarCancelada('06/09')" title="Marcar como cancelada">✏️</span></th>
         <th>13/09 <span class="lapis" onclick="marcarCancelada('13/09')" title="Marcar como cancelada">✏️</span></th>
@@ -415,7 +415,7 @@
 
     <p class="legenda">🔵 P = Presença &nbsp; 🔴 F = Falta &nbsp; 🟠 FJ = Falta Justificada</p>
     <table id="tabela-consagracao">
-      <thead><tr><th>Participante</th><th>06/09</th><th>13/09</th><th>20/09</th><th>27/09</th><th></th></tr></thead>
+      <thead id="thead-consagracao"><tr><th>Participante</th><th>06/09</th><th>13/09</th><th>20/09</th><th>27/09</th><th></th></tr></thead>
       <tbody id="tbody-consagracao">
         <tr><td><span class="nome-participante">Ana Souza</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill presente">P</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
         <tr><td><span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill falta">F</span></td><td><span class="status-pill presente">P</span></td><td><span class="status-pill falta">F</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
@@ -806,18 +806,86 @@ function lerLinhasTabela(tbodyId){
   return dados;
 }
 
+const MESES_INDICE = {Janeiro:0,Fevereiro:1,Março:2,Abril:3,Maio:4,Junho:5,Julho:6,Agosto:7,Setembro:8,Outubro:9,Novembro:10,Dezembro:11};
+
+function gerarDatasDoMes(nomeMes){
+  const ano = new Date().getFullYear();
+  const mesIndex = MESES_INDICE[nomeMes];
+  if(mesIndex === undefined) return [];
+  const diaSemana = parseInt(localStorage.getItem('celula_dia_semana') ?? '6');
+  const datas = [];
+  const data = new Date(ano, mesIndex, 1);
+  while(data.getMonth() === mesIndex){
+    if(data.getDay() === diaSemana){
+      const dd = String(data.getDate()).padStart(2,'0');
+      const mm = String(mesIndex + 1).padStart(2,'0');
+      datas.push(dd + '/' + mm);
+    }
+    data.setDate(data.getDate() + 1);
+  }
+  return datas;
+}
+
+function reconstruirCabecalhoDatas(theadId, datas, comLapisCancelar){
+  const thead = document.getElementById(theadId);
+  let html = '<tr><th>Participante</th>';
+  datas.forEach(d=>{
+    html += `<th>${d}`;
+    if(comLapisCancelar){
+      html += ` <span class="lapis" onclick="marcarCancelada('${d}')" title="Marcar como cancelada">✏️</span>`;
+    }
+    html += '</th>';
+  });
+  html += '<th></th></tr>';
+  thead.innerHTML = html;
+}
+
+function ajustarPillsLinha(linha, totalColunas){
+  // pega as células de status-pill atuais (ignora nome e excluir)
+  const celulasPill = Array.from(linha.querySelectorAll('td')).filter(td => td.querySelector('.status-pill'));
+  const diferenca = totalColunas - celulasPill.length;
+  if(diferenca > 0){
+    // adiciona colunas novas com falta por padrão, antes da última célula (excluir)
+    const celulaExcluir = linha.lastElementChild;
+    for(let i=0; i<diferenca; i++){
+      const td = document.createElement('td');
+      td.innerHTML = '<span class="status-pill falta">F</span>';
+      linha.insertBefore(td, celulaExcluir);
+    }
+  } else if(diferenca < 0){
+    // remove colunas em excesso (as últimas antes do excluir)
+    for(let i=0; i<Math.abs(diferenca); i++){
+      const alvo = celulasPill[celulasPill.length - 1 - i];
+      if(alvo) alvo.remove();
+    }
+  }
+}
+
+function atualizarColunasDatas(){
+  const mes = localStorage.getItem('celula_mes_referencia') || 'Setembro';
+  const datas = gerarDatasDoMes(mes);
+  if(datas.length === 0) return;
+
+  reconstruirCabecalhoDatas('thead-celula', datas, true);
+  document.querySelectorAll('#tabela-celula tr').forEach(l => ajustarPillsLinha(l, datas.length));
+
+  reconstruirCabecalhoDatas('thead-consagracao', datas, false);
+  document.querySelectorAll('#tbody-consagracao tr').forEach(l => ajustarPillsLinha(l, datas.length));
+
+  verificarFaltasConsagracao();
+}
+
 function mudarMesReferencia(mes){
   localStorage.setItem('celula_mes_referencia', mes);
   document.querySelectorAll('.input-mes-referencia').forEach(sel => sel.value = mes);
+  atualizarColunasDatas();
   salvarEstado();
-  // TODO: quando integrado ao app real, isso deve recalcular as datas
-  // (colunas dd/mm) das tabelas de Frequência e Consagração de acordo
-  // com os sábados/dia-da-semana escolhido daquele mês específico.
 }
 
 function aplicarMesReferenciaSalvo(){
   const mes = localStorage.getItem('celula_mes_referencia') || 'Setembro';
   document.querySelectorAll('.input-mes-referencia').forEach(sel => sel.value = mes);
+  atualizarColunasDatas();
 }
 aplicarMesReferenciaSalvo();
 
