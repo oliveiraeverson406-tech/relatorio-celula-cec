@@ -304,6 +304,16 @@
     <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
     <h3>👥 Frequência de Célula</h3>
 
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Mês de referência</label>
+      <select class="input-mes-referencia" onchange="mudarMesReferencia(this.value)" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+        <option value="Janeiro">Janeiro</option><option value="Fevereiro">Fevereiro</option><option value="Março">Março</option>
+        <option value="Abril">Abril</option><option value="Maio">Maio</option><option value="Junho">Junho</option>
+        <option value="Julho">Julho</option><option value="Agosto">Agosto</option><option value="Setembro" selected>Setembro</option>
+        <option value="Outubro">Outubro</option><option value="Novembro">Novembro</option><option value="Dezembro">Dezembro</option>
+      </select>
+    </div>
+
     <div style="display:flex; gap:8px; margin-bottom:14px;">
       <input type="text" id="input-novo-participante" placeholder="Nome do participante" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--borda); font-size:0.9rem;">
       <button onclick="adicionarParticipante()" style="background:var(--verde); color:#fff; border:none; padding:0 16px; border-radius:8px; font-weight:700; font-size:1.2rem; cursor:pointer;">+</button>
@@ -387,6 +397,16 @@
   <section class="detalhe" id="detalhe-consagracao">
     <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
     <h3>🙌 Frequência de Consagração</h3>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:0.82rem; font-weight:600; color:var(--verde-escuro);">Mês de referência</label>
+      <select class="input-mes-referencia" onchange="mudarMesReferencia(this.value)" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--borda); margin-top:4px; font-size:0.9rem;">
+        <option value="Janeiro">Janeiro</option><option value="Fevereiro">Fevereiro</option><option value="Março">Março</option>
+        <option value="Abril">Abril</option><option value="Maio">Maio</option><option value="Junho">Junho</option>
+        <option value="Julho">Julho</option><option value="Agosto">Agosto</option><option value="Setembro" selected>Setembro</option>
+        <option value="Outubro">Outubro</option><option value="Novembro">Novembro</option><option value="Dezembro">Dezembro</option>
+      </select>
+    </div>
 
     <div style="display:flex; gap:8px; margin-bottom:14px;">
       <input type="text" id="input-novo-consagracao" placeholder="Nome do participante" style="flex:1; padding:10px; border-radius:8px; border:1px solid var(--borda); font-size:0.9rem;">
@@ -786,6 +806,21 @@ function lerLinhasTabela(tbodyId){
   return dados;
 }
 
+function mudarMesReferencia(mes){
+  localStorage.setItem('celula_mes_referencia', mes);
+  document.querySelectorAll('.input-mes-referencia').forEach(sel => sel.value = mes);
+  salvarEstado();
+  // TODO: quando integrado ao app real, isso deve recalcular as datas
+  // (colunas dd/mm) das tabelas de Frequência e Consagração de acordo
+  // com os sábados/dia-da-semana escolhido daquele mês específico.
+}
+
+function aplicarMesReferenciaSalvo(){
+  const mes = localStorage.getItem('celula_mes_referencia') || 'Setembro';
+  document.querySelectorAll('.input-mes-referencia').forEach(sel => sel.value = mes);
+}
+aplicarMesReferenciaSalvo();
+
 function coletarEstado(){
   const visitas = {};
   document.querySelectorAll('#tabela-visitas .input-qtd').forEach(i=>{
@@ -809,6 +844,7 @@ function coletarEstado(){
       dia: localStorage.getItem('celula_dia_semana') || '6',
       hora: localStorage.getItem('celula_horario') || '19:30'
     },
+    mesReferencia: localStorage.getItem('celula_mes_referencia') || 'Setembro',
     frequenciaCelula: lerLinhasTabela('tabela-celula'),
     consagracao: lerLinhasTabela('tbody-consagracao'),
     visitantes: lerLinhasTabela('tabela-visitantes'),
@@ -848,6 +884,9 @@ function aplicarEstado(estado){
   if(estado.diaHora){
     localStorage.setItem('celula_dia_semana', estado.diaHora.dia);
     localStorage.setItem('celula_horario', estado.diaHora.hora);
+  }
+  if(estado.mesReferencia){
+    localStorage.setItem('celula_mes_referencia', estado.mesReferencia);
   }
 
   // frequência de célula
@@ -910,6 +949,7 @@ function aplicarEstado(estado){
 
   atualizarResumoDadosCelula();
   atualizarResumoDiaHora();
+  aplicarMesReferenciaSalvo();
   atualizarResumoCanceladas();
   atualizarResumoVisitantes();
   verificarFaltasConsagracao();
