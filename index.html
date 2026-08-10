@@ -931,10 +931,14 @@ function adicionarCancelamentoManual(){
 }
 
 function marcarCancelada(data){
-  // adiciona a linha na tabela de Células Canceladas sem motivo ainda
+  const motivo = prompt('Marcar ' + data + ' como célula cancelada.\nMotivo (opcional):', '');
+  if(motivo === null) return; // cancelou a marcação
+
+  // adiciona a linha na tabela de Células Canceladas já com o motivo
   const tabela = document.getElementById('tabela-canceladas');
   const linha = document.createElement('tr');
-  linha.innerHTML = `<td>${data}</td><td class="motivo-texto">—</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
+  const motivoFinal = motivo.trim() || '—';
+  linha.innerHTML = `<td>${data}</td><td class="motivo-texto">${motivoFinal}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
   tabela.appendChild(linha);
 
   ordenarCanceladas();
@@ -942,7 +946,6 @@ function marcarCancelada(data){
   atualizarMarcacaoCanceladaCabecalho();
 
   salvarEstado();
-  alert(data + ' marcada como célula cancelada. Toque no ✏️ na lista de "Células Canceladas" pra justificar o motivo.');
 }
 
 function justificarCancelamento(botao){
