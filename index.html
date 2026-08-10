@@ -860,9 +860,6 @@ verificarFaltasConsagracao();
 const MESES_NOME = {'01':'Janeiro','02':'Fevereiro','03':'Março','04':'Abril','05':'Maio','06':'Junho','07':'Julho','08':'Agosto','09':'Setembro','10':'Outubro','11':'Novembro','12':'Dezembro'};
 
 function atualizarMarcacaoCanceladaCabecalho(){
-  const thead = document.getElementById('thead-celula');
-  if(!thead) return;
-
   const motivoPorData = {};
   document.querySelectorAll('#tabela-canceladas tr').forEach(l=>{
     const data = l.children[0].textContent.trim();
@@ -870,24 +867,28 @@ function atualizarMarcacaoCanceladaCabecalho(){
     motivoPorData[data] = motivo;
   });
 
-  thead.querySelectorAll('th[data-data]').forEach(th=>{
-    const data = th.dataset.data;
-    let rotulo = th.querySelector('.rotulo-cancelada');
-    if(motivoPorData.hasOwnProperty(data)){
-      const motivo = motivoPorData[data];
-      th.classList.add('th-cancelada');
-      th.title = 'Célula cancelada' + (motivo && motivo !== '—' ? ': ' + motivo : '');
-      if(!rotulo){
-        rotulo = document.createElement('div');
-        rotulo.className = 'rotulo-cancelada';
-        th.appendChild(rotulo);
+  ['thead-celula', 'thead-consagracao', 'thead-visitantes'].forEach(theadId=>{
+    const thead = document.getElementById(theadId);
+    if(!thead) return;
+    thead.querySelectorAll('th[data-data]').forEach(th=>{
+      const data = th.dataset.data;
+      let rotulo = th.querySelector('.rotulo-cancelada');
+      if(motivoPorData.hasOwnProperty(data)){
+        const motivo = motivoPorData[data];
+        th.classList.add('th-cancelada');
+        th.title = 'Célula cancelada' + (motivo && motivo !== '—' ? ': ' + motivo : '');
+        if(!rotulo){
+          rotulo = document.createElement('div');
+          rotulo.className = 'rotulo-cancelada';
+          th.appendChild(rotulo);
+        }
+        rotulo.innerHTML = '🚫 Cancelada <span class="lapis desfazer-cancelada" onclick="desfazerCancelamento(event, \'' + data + '\')" title="Desfazer cancelamento">↩️</span>';
+      } else {
+        th.classList.remove('th-cancelada');
+        th.removeAttribute('title');
+        if(rotulo) rotulo.remove();
       }
-      rotulo.innerHTML = '🚫 Cancelada <span class="lapis desfazer-cancelada" onclick="desfazerCancelamento(event, \'' + data + '\')" title="Desfazer cancelamento">↩️</span>';
-    } else {
-      th.classList.remove('th-cancelada');
-      th.removeAttribute('title');
-      if(rotulo) rotulo.remove();
-    }
+    });
   });
 }
 
@@ -1129,10 +1130,10 @@ function atualizarColunasDatas(){
   reconstruirCabecalhoDatas('thead-celula', datas, true);
   document.querySelectorAll('#tabela-celula tr').forEach(l => ajustarPillsLinha(l, datas.length));
 
-  reconstruirCabecalhoDatas('thead-consagracao', datas, false);
+  reconstruirCabecalhoDatas('thead-consagracao', datas, true);
   document.querySelectorAll('#tbody-consagracao tr').forEach(l => ajustarPillsLinha(l, datas.length));
 
-  reconstruirCabecalhoDatas('thead-visitantes', datas, false);
+  reconstruirCabecalhoDatas('thead-visitantes', datas, true);
   document.querySelectorAll('#tabela-visitantes tr').forEach(l => ajustarPillsLinha(l, datas.length));
 
   verificarFaltasConsagracao();
