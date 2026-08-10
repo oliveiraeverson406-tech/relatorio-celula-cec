@@ -891,6 +891,31 @@ function atualizarMarcacaoCanceladaCabecalho(){
   });
 }
 
+function existeCancelamento(data){
+  const tbody = document.getElementById('tabela-canceladas');
+  return Array.from(tbody.querySelectorAll('tr')).some(l => l.children[0].textContent.trim() === data);
+}
+
+function removerCanceladasDuplicadas(){
+  const tbody = document.getElementById('tabela-canceladas');
+  if(!tbody) return;
+  const vistas = {};
+  Array.from(tbody.querySelectorAll('tr')).forEach(l=>{
+    const data = l.children[0].textContent.trim();
+    const motivoAtual = l.querySelector('.motivo-texto')?.textContent.trim() || '—';
+    if(vistas.hasOwnProperty(data)){
+      const linhaExistente = vistas[data];
+      const motivoExistente = linhaExistente.querySelector('.motivo-texto');
+      if(motivoExistente.textContent.trim() === '—' && motivoAtual !== '—'){
+        motivoExistente.textContent = motivoAtual;
+      }
+      l.remove();
+    } else {
+      vistas[data] = l;
+    }
+  });
+}
+
 function ordenarCanceladas(){
   const tbody = document.getElementById('tabela-canceladas');
   const linhas = Array.from(tbody.querySelectorAll('tr'));
@@ -917,6 +942,11 @@ function adicionarCancelamentoManual(){
   const [dd, mm] = data.split('/');
   const dataFormatada = dd.padStart(2,'0') + '/' + mm.padStart(2,'0');
 
+  if(existeCancelamento(dataFormatada)){
+    alert('A data ' + dataFormatada + ' já está marcada como cancelada. Toque no ✏️ dessa linha se quiser mudar o motivo.');
+    return;
+  }
+
   const tabela = document.getElementById('tabela-canceladas');
   const linha = document.createElement('tr');
   linha.innerHTML = `<td>${dataFormatada}</td><td class="motivo-texto">${motivo || '—'}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
@@ -931,6 +961,11 @@ function adicionarCancelamentoManual(){
 }
 
 function marcarCancelada(data){
+  if(existeCancelamento(data)){
+    alert('A data ' + data + ' já está marcada como cancelada. Toque no ✏️ dela na lista de "Células Canceladas" se quiser mudar o motivo.');
+    return;
+  }
+
   const motivo = prompt('Marcar ' + data + ' como célula cancelada.\nMotivo (opcional):', '');
   if(motivo === null) return; // cancelou a marcação
 
@@ -1219,6 +1254,7 @@ function aplicarEstado(estado){
       tr.innerHTML = `<td>${c.data}</td><td class="motivo-texto">${c.motivo}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
       tbody.appendChild(tr);
     });
+    removerCanceladasDuplicadas();
     ordenarCanceladas();
   }
 
