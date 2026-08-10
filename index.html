@@ -535,7 +535,7 @@
     <table>
       <thead><tr><th>Data</th><th>Motivo</th><th></th></tr></thead>
       <tbody id="tabela-canceladas">
-        <tr><td>27/09</td><td class="motivo-texto">Chuva forte</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td></tr>
+        <tr><td>27/09</td><td class="motivo-texto">Chuva forte</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span> <span class="lapis" onclick="excluirCancelamento(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
     <button onclick="salvarEstado(true)" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer; margin-top:14px; width:100%;">💾 Salvar</button>
@@ -949,7 +949,7 @@ function adicionarCancelamentoManual(){
 
   const tabela = document.getElementById('tabela-canceladas');
   const linha = document.createElement('tr');
-  linha.innerHTML = `<td>${dataFormatada}</td><td class="motivo-texto">${motivo || '—'}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
+  linha.innerHTML = `<td>${dataFormatada}</td><td class="motivo-texto">${motivo || '—'}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span> <span class="lapis" onclick="excluirCancelamento(this)" title="Excluir">🗑️</span></td>`;
   tabela.appendChild(linha);
 
   inputData.value = '';
@@ -973,7 +973,7 @@ function marcarCancelada(data){
   const tabela = document.getElementById('tabela-canceladas');
   const linha = document.createElement('tr');
   const motivoFinal = motivo.trim() || '—';
-  linha.innerHTML = `<td>${data}</td><td class="motivo-texto">${motivoFinal}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
+  linha.innerHTML = `<td>${data}</td><td class="motivo-texto">${motivoFinal}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span> <span class="lapis" onclick="excluirCancelamento(this)" title="Excluir">🗑️</span></td>`;
   tabela.appendChild(linha);
 
   ordenarCanceladas();
@@ -990,6 +990,16 @@ function justificarCancelamento(botao){
   const motivo = prompt('Motivo do cancelamento:', atual);
   if(motivo === null) return;
   celulaMotivo.textContent = motivo.trim() || '—';
+  atualizarMarcacaoCanceladaCabecalho();
+  salvarEstado();
+}
+
+function excluirCancelamento(botao){
+  const linha = botao.closest('tr');
+  const data = linha.children[0].textContent.trim();
+  if(!confirm('Remover o cancelamento de ' + data + '? A célula volta a valer normalmente nessa data.')) return;
+  linha.remove();
+  atualizarResumoCanceladas();
   atualizarMarcacaoCanceladaCabecalho();
   salvarEstado();
 }
@@ -1251,7 +1261,7 @@ function aplicarEstado(estado){
     tbody.innerHTML = '';
     estado.canceladas.forEach(c=>{
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${c.data}</td><td class="motivo-texto">${c.motivo}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
+      tr.innerHTML = `<td>${c.data}</td><td class="motivo-texto">${c.motivo}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span> <span class="lapis" onclick="excluirCancelamento(this)" title="Excluir">🗑️</span></td>`;
       tbody.appendChild(tr);
     });
     removerCanceladasDuplicadas();
