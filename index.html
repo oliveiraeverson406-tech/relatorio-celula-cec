@@ -882,7 +882,7 @@ function atualizarMarcacaoCanceladaCabecalho(){
         rotulo.className = 'rotulo-cancelada';
         th.appendChild(rotulo);
       }
-      rotulo.textContent = '🚫 Cancelada';
+      rotulo.innerHTML = '🚫 Cancelada <span class="lapis desfazer-cancelada" onclick="desfazerCancelamento(event, \'' + data + '\')" title="Desfazer cancelamento">↩️</span>';
     } else {
       th.classList.remove('th-cancelada');
       th.removeAttribute('title');
@@ -999,6 +999,17 @@ function excluirCancelamento(botao){
   const data = linha.children[0].textContent.trim();
   if(!confirm('Remover o cancelamento de ' + data + '? A célula volta a valer normalmente nessa data.')) return;
   linha.remove();
+  atualizarResumoCanceladas();
+  atualizarMarcacaoCanceladaCabecalho();
+  salvarEstado();
+}
+
+function desfazerCancelamento(evento, data){
+  evento.stopPropagation();
+  if(!confirm('Desfazer o cancelamento de ' + data + '? A célula volta a valer normalmente nessa data.')) return;
+  const tbody = document.getElementById('tabela-canceladas');
+  const linha = Array.from(tbody.querySelectorAll('tr')).find(l => l.children[0].textContent.trim() === data);
+  if(linha) linha.remove();
   atualizarResumoCanceladas();
   atualizarMarcacaoCanceladaCabecalho();
   salvarEstado();
