@@ -220,6 +220,22 @@
     opacity:0.65;
   }
   .lapis:hover{ opacity:1; }
+  .numero-participante{
+    color:var(--texto-suave);
+    font-weight:700;
+    margin-right:2px;
+  }
+  th.th-cancelada{
+    background:#fbeadd;
+    color:var(--laranja);
+  }
+  .rotulo-cancelada{
+    font-size:0.66rem;
+    font-weight:700;
+    color:var(--laranja);
+    margin-top:2px;
+    white-space:nowrap;
+  }
   footer{
     text-align:center;
     font-size:0.75rem;
@@ -337,8 +353,8 @@
         <th></th>
       </tr></thead>
       <tbody id="tabela-celula">
-        <tr><td><span class="nome-participante" id="nome-1">Ana Souza</span> <span class="lapis" onclick="editarNome('nome-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
-        <tr><td><span class="nome-participante" id="nome-2">Carlos Lima</span> <span class="lapis" onclick="editarNome('nome-2')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill justificada" onclick="alternarPresenca(this)">FJ</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="numero-participante"></span> <span class="nome-participante" id="nome-1">Ana Souza</span> <span class="lapis" onclick="editarNome('nome-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="numero-participante"></span> <span class="nome-participante" id="nome-2">Carlos Lima</span> <span class="lapis" onclick="editarNome('nome-2')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill justificada" onclick="alternarPresenca(this)">FJ</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
     <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Toque no ✏️ ao lado da data pra marcar que não teve célula nesse dia — ela sai do cálculo de % e aparece automaticamente em "Células Canceladas".</p>
@@ -425,8 +441,8 @@
     <table id="tabela-consagracao">
       <thead id="thead-consagracao"><tr><th>Participante</th><th>06/09</th><th>13/09</th><th>20/09</th><th>27/09</th><th></th></tr></thead>
       <tbody id="tbody-consagracao">
-        <tr><td><span class="nome-participante">Ana Souza</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
-        <tr><td><span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="numero-participante"></span> <span class="nome-participante">Ana Souza</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="numero-participante"></span> <span class="nome-participante">Carlos Lima</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
     <button onclick="salvarEstado(true)" style="background:var(--verde); color:#fff; border:none; padding:12px; border-radius:8px; font-weight:700; font-size:0.9rem; cursor:pointer; margin-top:14px; width:100%;">💾 Salvar</button>
@@ -497,8 +513,8 @@
     <table>
       <thead id="thead-visitantes"><tr><th>Visitante</th><th>06/09</th><th>13/09</th><th>20/09</th><th></th></tr></thead>
       <tbody id="tabela-visitantes">
-        <tr><td><span class="nome-participante" id="visitante-1">Márcia Reis</span> <span class="lapis" onclick="editarNomeVisitante('visitante-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill justificada" onclick="alternarPresenca(this)">FJ</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
-        <tr><td><span class="nome-participante" id="visitante-2">João Pedro</span> <span class="lapis" onclick="editarNomeVisitante('visitante-2')" title="Editar nome">✏️</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="numero-participante"></span> <span class="nome-participante" id="visitante-1">Márcia Reis</span> <span class="lapis" onclick="editarNomeVisitante('visitante-1')" title="Editar nome">✏️</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill justificada" onclick="alternarPresenca(this)">FJ</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
+        <tr><td><span class="numero-participante"></span> <span class="nome-participante" id="visitante-2">João Pedro</span> <span class="lapis" onclick="editarNomeVisitante('visitante-2')" title="Editar nome">✏️</span></td><td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="status-pill presente" onclick="alternarPresenca(this)">P</span></td><td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td></tr>
       </tbody>
     </table>
     <p style="font-size:0.78rem; color:var(--texto-suave); margin-top:10px;">Registro de quem visitou a célula, sem contar % de frequência — só o histórico de presença.</p>
@@ -509,6 +525,13 @@
     <button class="voltar" onclick="voltarDashboard()">← Voltar</button>
     <h3>🚫 Células Canceladas</h3>
     <p class="legenda" id="resumo-canceladas-mes">Setembro: 1 cancelada</p>
+
+    <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+      <input type="text" id="input-nova-data-cancelada" placeholder="Data (dd/mm)" maxlength="5" style="flex:1; min-width:100px; padding:10px; border-radius:8px; border:1px solid var(--borda); font-size:0.9rem;">
+      <input type="text" id="input-novo-motivo-cancelada" placeholder="Motivo (opcional)" style="flex:2; min-width:140px; padding:10px; border-radius:8px; border:1px solid var(--borda); font-size:0.9rem;">
+      <button onclick="adicionarCancelamentoManual()" style="background:var(--verde); color:#fff; border:none; padding:0 16px; border-radius:8px; font-weight:700; font-size:1.2rem; cursor:pointer;">+</button>
+    </div>
+
     <table>
       <thead><tr><th>Data</th><th>Motivo</th><th></th></tr></thead>
       <tbody id="tabela-canceladas">
@@ -636,6 +659,28 @@ function gerarPillsFalta(qtd){
   return html;
 }
 
+function ordenarERenumerar(tbodyId){
+  const tbody = document.getElementById(tbodyId);
+  if(!tbody) return;
+  const linhas = Array.from(tbody.querySelectorAll('tr'));
+  linhas.sort((a, b) => {
+    const nomeA = a.querySelector('.nome-participante')?.textContent.trim() || '';
+    const nomeB = b.querySelector('.nome-participante')?.textContent.trim() || '';
+    return nomeA.localeCompare(nomeB, 'pt-BR', {sensitivity:'base'});
+  });
+  linhas.forEach((linha, i) => {
+    let numSpan = linha.querySelector('.numero-participante');
+    if(!numSpan){
+      numSpan = document.createElement('span');
+      numSpan.className = 'numero-participante';
+      const nomeSpan = linha.querySelector('.nome-participante');
+      if(nomeSpan) nomeSpan.parentElement.insertBefore(numSpan, nomeSpan);
+    }
+    numSpan.textContent = (i + 1) + '.';
+    tbody.appendChild(linha);
+  });
+}
+
 function adicionarParticipante(){
   const input = document.getElementById('input-novo-participante');
   const nome = input.value.trim();
@@ -650,7 +695,7 @@ function adicionarParticipante(){
   // adiciona na tabela de Frequência de Célula (com falta em branco por padrão)
   const linhaCelula = document.createElement('tr');
   linhaCelula.innerHTML = `
-    <td><span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNome('${novoId}')" title="Editar nome">✏️</span></td>
+    <td><span class="numero-participante"></span> <span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNome('${novoId}')" title="Editar nome">✏️</span></td>
     ${gerarPillsFalta(qtdColunas)}
     <td><span class="lapis" onclick="excluirParticipante(this)" title="Excluir">🗑️</span></td>
   `;
@@ -660,17 +705,17 @@ function adicionarParticipante(){
   const qtdColunasConsagracao = contarColunasDatas('thead-consagracao');
   const linhaConsagracao = document.createElement('tr');
   linhaConsagracao.innerHTML = `
-    <td><span class="nome-participante">${nome}</span></td>
+    <td><span class="numero-participante"></span> <span class="nome-participante">${nome}</span></td>
     ${gerarPillsFalta(qtdColunasConsagracao)}
     <td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tbody-consagracao').appendChild(linhaConsagracao);
 
   input.value = '';
+  ordenarERenumerar('tabela-celula');
+  ordenarERenumerar('tbody-consagracao');
   verificarFaltasConsagracao();
   salvarEstado();
-  // TODO: quando integrado ao app real, ordenar a lista em ordem alfabética
-  // e persistir o novo participante no armazenamento
 }
 
 function excluirParticipante(botao){
@@ -678,6 +723,7 @@ function excluirParticipante(botao){
   const nome = linha.querySelector('.nome-participante').textContent;
   if(!confirm('Excluir "' + nome + '" da lista de participantes?')) return;
   linha.remove();
+  ordenarERenumerar('tabela-celula');
   salvarEstado();
   // TODO: quando integrado ao app real, remover também a linha
   // correspondente na tabela de Consagração pelo nome/id do participante
@@ -698,16 +744,16 @@ function adicionarVisitante(){
 
   const linha = document.createElement('tr');
   linha.innerHTML = `
-    <td><span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNomeVisitante('${novoId}')" title="Editar nome">✏️</span></td>
+    <td><span class="numero-participante"></span> <span class="nome-participante" id="${novoId}">${nome}</span> <span class="lapis" onclick="editarNomeVisitante('${novoId}')" title="Editar nome">✏️</span></td>
     ${gerarPillsFalta(qtdColunas)}
     <td><span class="lapis" onclick="excluirVisitante(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tabela-visitantes').appendChild(linha);
 
   input.value = '';
+  ordenarERenumerar('tabela-visitantes');
   atualizarResumoVisitantes();
   salvarEstado();
-  // TODO: quando integrado ao app real, ordenar em ordem alfabética e persistir
 }
 
 function excluirVisitante(botao){
@@ -715,6 +761,7 @@ function excluirVisitante(botao){
   const nome = linha.querySelector('.nome-participante').textContent;
   if(!confirm('Excluir "' + nome + '" da lista de visitantes?')) return;
   linha.remove();
+  ordenarERenumerar('tabela-visitantes');
   atualizarResumoVisitantes();
   salvarEstado();
 }
@@ -724,6 +771,7 @@ function editarNomeVisitante(id){
   const novoNome = prompt('Editar nome do visitante:', span.textContent);
   if(novoNome === null || novoNome.trim() === '') return;
   span.textContent = novoNome.trim();
+  ordenarERenumerar('tabela-visitantes');
   salvarEstado();
 }
 
@@ -738,6 +786,7 @@ function editarNome(id){
   const novoNome = prompt('Editar nome do participante:', span.textContent);
   if(novoNome === null || novoNome.trim() === '') return; // cancelou ou deixou vazio
   span.textContent = novoNome.trim();
+  ordenarERenumerar('tabela-celula');
   salvarEstado();
   // o histórico de presença da linha não é alterado, só o nome
 }
@@ -752,12 +801,13 @@ function adicionarParticipanteConsagracao(){
   const qtdColunas = contarColunasDatas('thead-consagracao');
   const linha = document.createElement('tr');
   linha.innerHTML = `
-    <td><span class="nome-participante">${nome}</span></td>
+    <td><span class="numero-participante"></span> <span class="nome-participante">${nome}</span></td>
     ${gerarPillsFalta(qtdColunas)}
     <td><span class="lapis" onclick="excluirParticipanteConsagracao(this)" title="Excluir">🗑️</span></td>
   `;
   document.getElementById('tbody-consagracao').appendChild(linha);
   input.value = '';
+  ordenarERenumerar('tbody-consagracao');
   verificarFaltasConsagracao();
   salvarEstado();
   // TODO: quando integrado ao app real, adicionar também na tabela de
@@ -769,6 +819,7 @@ function excluirParticipanteConsagracao(botao){
   const nome = linha.querySelector('.nome-participante').textContent;
   if(!confirm('Excluir "' + nome + '" da lista de participantes?')) return;
   linha.remove();
+  ordenarERenumerar('tbody-consagracao');
   salvarEstado();
 }
 
@@ -808,6 +859,77 @@ verificarFaltasConsagracao();
 
 const MESES_NOME = {'01':'Janeiro','02':'Fevereiro','03':'Março','04':'Abril','05':'Maio','06':'Junho','07':'Julho','08':'Agosto','09':'Setembro','10':'Outubro','11':'Novembro','12':'Dezembro'};
 
+function atualizarMarcacaoCanceladaCabecalho(){
+  const thead = document.getElementById('thead-celula');
+  if(!thead) return;
+
+  const motivoPorData = {};
+  document.querySelectorAll('#tabela-canceladas tr').forEach(l=>{
+    const data = l.children[0].textContent.trim();
+    const motivo = l.querySelector('.motivo-texto')?.textContent.trim() || '';
+    motivoPorData[data] = motivo;
+  });
+
+  thead.querySelectorAll('th[data-data]').forEach(th=>{
+    const data = th.dataset.data;
+    let rotulo = th.querySelector('.rotulo-cancelada');
+    if(motivoPorData.hasOwnProperty(data)){
+      const motivo = motivoPorData[data];
+      th.classList.add('th-cancelada');
+      th.title = 'Célula cancelada' + (motivo && motivo !== '—' ? ': ' + motivo : '');
+      if(!rotulo){
+        rotulo = document.createElement('div');
+        rotulo.className = 'rotulo-cancelada';
+        th.appendChild(rotulo);
+      }
+      rotulo.textContent = '🚫 Cancelada';
+    } else {
+      th.classList.remove('th-cancelada');
+      th.removeAttribute('title');
+      if(rotulo) rotulo.remove();
+    }
+  });
+}
+
+function ordenarCanceladas(){
+  const tbody = document.getElementById('tabela-canceladas');
+  const linhas = Array.from(tbody.querySelectorAll('tr'));
+  linhas.sort((a, b) => {
+    const [ddA, mmA] = a.children[0].textContent.trim().split('/');
+    const [ddB, mmB] = b.children[0].textContent.trim().split('/');
+    const chaveA = (parseInt(mmA) || 0) * 100 + (parseInt(ddA) || 0);
+    const chaveB = (parseInt(mmB) || 0) * 100 + (parseInt(ddB) || 0);
+    return chaveA - chaveB;
+  });
+  linhas.forEach(l => tbody.appendChild(l));
+}
+
+function adicionarCancelamentoManual(){
+  const inputData = document.getElementById('input-nova-data-cancelada');
+  const inputMotivo = document.getElementById('input-novo-motivo-cancelada');
+  const data = inputData.value.trim();
+  const motivo = inputMotivo.value.trim();
+
+  if(!/^\d{1,2}\/\d{1,2}$/.test(data)){
+    alert('Digite a data no formato dd/mm, ex: 05/09');
+    return;
+  }
+  const [dd, mm] = data.split('/');
+  const dataFormatada = dd.padStart(2,'0') + '/' + mm.padStart(2,'0');
+
+  const tabela = document.getElementById('tabela-canceladas');
+  const linha = document.createElement('tr');
+  linha.innerHTML = `<td>${dataFormatada}</td><td class="motivo-texto">${motivo || '—'}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
+  tabela.appendChild(linha);
+
+  inputData.value = '';
+  inputMotivo.value = '';
+  ordenarCanceladas();
+  atualizarResumoCanceladas();
+  atualizarMarcacaoCanceladaCabecalho();
+  salvarEstado();
+}
+
 function marcarCancelada(data){
   // adiciona a linha na tabela de Células Canceladas sem motivo ainda
   const tabela = document.getElementById('tabela-canceladas');
@@ -815,7 +937,9 @@ function marcarCancelada(data){
   linha.innerHTML = `<td>${data}</td><td class="motivo-texto">—</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
   tabela.appendChild(linha);
 
+  ordenarCanceladas();
   atualizarResumoCanceladas();
+  atualizarMarcacaoCanceladaCabecalho();
 
   salvarEstado();
   alert(data + ' marcada como célula cancelada. Toque no ✏️ na lista de "Células Canceladas" pra justificar o motivo.');
@@ -828,6 +952,7 @@ function justificarCancelamento(botao){
   const motivo = prompt('Motivo do cancelamento:', atual);
   if(motivo === null) return;
   celulaMotivo.textContent = motivo.trim() || '—';
+  atualizarMarcacaoCanceladaCabecalho();
   salvarEstado();
 }
 
@@ -905,7 +1030,7 @@ function reconstruirCabecalhoDatas(theadId, datas, comLapisCancelar){
   const thead = document.getElementById(theadId);
   let html = '<tr><th>Participante</th>';
   datas.forEach(d=>{
-    html += `<th>${d}`;
+    html += `<th${comLapisCancelar ? ` data-data="${d}"` : ''}>${d}`;
     if(comLapisCancelar){
       html += ` <span class="lapis" onclick="marcarCancelada('${d}')" title="Marcar como cancelada">✏️</span>`;
     }
@@ -913,6 +1038,7 @@ function reconstruirCabecalhoDatas(theadId, datas, comLapisCancelar){
   });
   html += '<th></th></tr>';
   thead.innerHTML = html;
+  if(comLapisCancelar) atualizarMarcacaoCanceladaCabecalho();
 }
 
 function ajustarPillsLinha(linha, totalColunas){
@@ -1004,7 +1130,7 @@ function coletarEstado(){
 }
 
 function construirLinhaComPills(nome, pills, comExcluir, funcaoExcluir, idNome, funcaoEditar){
-  let html = '<td>';
+  let html = '<td><span class="numero-participante"></span> ';
   if(idNome){
     html += `<span class="nome-participante" id="${idNome}">${nome}</span> <span class="lapis" onclick="${funcaoEditar}('${idNome}')" title="Editar nome">✏️</span>`;
   } else {
@@ -1053,6 +1179,7 @@ function aplicarEstado(estado){
       tbody.appendChild(tr);
     });
     contadorParticipante = estado.frequenciaCelula.length;
+    ordenarERenumerar('tabela-celula');
   }
 
   // consagração
@@ -1064,6 +1191,7 @@ function aplicarEstado(estado){
       tr.innerHTML = construirLinhaComPills(p.nome, p.pills, true, 'excluirParticipanteConsagracao');
       tbody.appendChild(tr);
     });
+    ordenarERenumerar('tbody-consagracao');
   }
 
   // visitantes
@@ -1076,6 +1204,7 @@ function aplicarEstado(estado){
       tbody.appendChild(tr);
     });
     contadorVisitante = estado.visitantes.length;
+    ordenarERenumerar('tabela-visitantes');
   }
 
   // canceladas
@@ -1087,6 +1216,7 @@ function aplicarEstado(estado){
       tr.innerHTML = `<td>${c.data}</td><td class="motivo-texto">${c.motivo}</td><td><span class="lapis" onclick="justificarCancelamento(this)" title="Justificar">✏️</span></td>`;
       tbody.appendChild(tr);
     });
+    ordenarCanceladas();
   }
 
   // visitas por mês
@@ -1159,6 +1289,12 @@ function restaurarBackup(arquivo){
 
 // carrega os dados salvos assim que o app abre
 carregarEstadoSalvo();
+
+// garante numeração e ordem alfabética nas 3 listas de nomes, mesmo sem dados salvos
+ordenarERenumerar('tabela-celula');
+ordenarERenumerar('tbody-consagracao');
+ordenarERenumerar('tabela-visitantes');
+ordenarCanceladas();
 
 // registra o service worker para o app funcionar instalado, com cache offline
 if('serviceWorker' in navigator){
