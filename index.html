@@ -234,6 +234,13 @@
     font-weight:700;
     margin-right:2px;
   }
+  .contagem-faltas{
+    font-size:0.7rem;
+    color:var(--texto-suave);
+    font-weight:600;
+    margin-top:2px;
+    white-space:nowrap;
+  }
   th.th-cancelada{
     background:#fbeadd;
     color:var(--laranja);
@@ -720,12 +727,22 @@ function renderizarTabelaPresenca(cfg){
   tbody.innerHTML = '';
   nomesOrdenados.forEach((nome, i)=>{
     const tr = document.createElement('tr');
-    let html = `<td><span class="numero-participante">${i+1}.</span> <span class="nome-participante">${escaparHtml(nome)}</span> <span class="lapis" onclick="${cfg.funcaoEditar}('${escaparAtributo(nome)}')" title="Editar nome">✏️</span></td>`;
+    let presencas = 0, faltas = 0, justificadas = 0;
+    let pillsHtml = '';
     datas.forEach(data=>{
       const sigla = obterPresenca(cfg.presencas, mes, nome, data);
+      if(sigla === 'F') faltas++;
+      else if(sigla === 'P') presencas++;
+      else if(sigla === 'FJ') justificadas++;
       const classe = SIGLA_PARA_CLASSE[sigla] || 'vazio';
-      html += `<td><span class="status-pill ${classe}" data-nome="${escaparAtributo(nome)}" data-data="${data}" onclick="${cfg.funcaoAlternar}(this)">${sigla}</span></td>`;
+      pillsHtml += `<td><span class="status-pill ${classe}" data-nome="${escaparAtributo(nome)}" data-data="${data}" onclick="${cfg.funcaoAlternar}(this)">${sigla}</span></td>`;
     });
+    let html = `<td><span class="numero-participante">${i+1}.</span> <span class="nome-participante">${escaparHtml(nome)}</span> <span class="lapis" onclick="${cfg.funcaoEditar}('${escaparAtributo(nome)}')" title="Editar nome">✏️</span>`;
+    if(cfg.contarFaltas){
+      html += `<div class="contagem-faltas">🔵 ${presencas} P &nbsp; 🔴 ${faltas} F &nbsp; 🟠 ${justificadas} FJ</div>`;
+    }
+    html += '</td>';
+    html += pillsHtml;
     html += `<td><span class="lapis" onclick="${cfg.funcaoExcluir}('${escaparAtributo(nome)}')" title="Excluir">🗑️</span></td>`;
     tr.innerHTML = html;
     tbody.appendChild(tr);
@@ -739,7 +756,7 @@ function renderizarCelula(){
     theadId:'thead-celula', tbodyId:'tabela-celula',
     participantes: ESTADO.participantesCelula, presencas: ESTADO.presencasCelula,
     funcaoAlternar:'alternarPresencaCelula', funcaoExcluir:'excluirParticipanteCelula', funcaoEditar:'editarNomeCelula',
-    comLapisCancelar:true
+    comLapisCancelar:true, contarFaltas:true
   });
   atualizarMediaCelula();
 }
@@ -821,7 +838,7 @@ function renderizarConsagracao(){
     theadId:'thead-consagracao', tbodyId:'tbody-consagracao',
     participantes: ESTADO.participantesConsagracao, presencas: ESTADO.presencasConsagracao,
     funcaoAlternar:'alternarPresencaConsagracao', funcaoExcluir:'excluirParticipanteConsagracao', funcaoEditar:'editarNomeConsagracao',
-    comLapisCancelar:true
+    comLapisCancelar:true, contarFaltas:true
   });
   verificarFaltasConsagracao();
   atualizarMediaConsagracao();
