@@ -191,6 +191,15 @@
   .status-pill.presente{ background:var(--azul); }
   .status-pill.falta{ background:var(--vermelho); }
   .status-pill.justificada{ background:var(--laranja); }
+  .status-pill.vazio{
+    background:#fff;
+    border:2px solid var(--borda);
+    border-radius:5px;
+    color:transparent;
+    min-width:16px;
+    min-height:16px;
+    padding:2px 9px;
+  }
   .legenda{
     font-size:0.78rem;
     color:var(--texto-suave);
@@ -654,7 +663,7 @@ function contarColunasDatas(theadId){
 function gerarPillsFalta(qtd){
   let html = '';
   for(let i=0; i<qtd; i++){
-    html += '<td><span class="status-pill falta" onclick="alternarPresenca(this)">F</span></td>';
+    html += '<td><span class="status-pill vazio" onclick="alternarPresenca(this)"></span></td>';
   }
   return html;
 }
@@ -823,11 +832,11 @@ function excluirParticipanteConsagracao(botao){
   salvarEstado();
 }
 
-const ORDEM_PRESENCA = ['presente', 'falta', 'justificada'];
-const TEXTO_PRESENCA = {presente:'P', falta:'F', justificada:'FJ'};
+const ORDEM_PRESENCA = ['vazio', 'presente', 'falta', 'justificada'];
+const TEXTO_PRESENCA = {vazio:'', presente:'P', falta:'F', justificada:'FJ'};
 
 function alternarPresenca(elemento){
-  const atual = ORDEM_PRESENCA.find(c => elemento.classList.contains(c)) || 'falta';
+  const atual = ORDEM_PRESENCA.find(c => elemento.classList.contains(c)) || 'vazio';
   const proximoIndex = (ORDEM_PRESENCA.indexOf(atual) + 1) % ORDEM_PRESENCA.length;
   const proximo = ORDEM_PRESENCA[proximoIndex];
 
@@ -1049,8 +1058,8 @@ function salvarVisitas(){
 
 // ---------- Sistema de salvar / carregar / backup ----------
 
-const CLASSE_PARA_SIGLA = {presente:'P', falta:'F', justificada:'FJ'};
-const SIGLA_PARA_CLASSE = {P:'presente', F:'falta', FJ:'justificada'};
+const CLASSE_PARA_SIGLA = {presente:'P', falta:'F', justificada:'FJ', vazio:''};
+const SIGLA_PARA_CLASSE = {P:'presente', F:'falta', FJ:'justificada', '':'vazio'};
 
 function lerLinhasTabela(tbodyId){
   const linhas = document.querySelectorAll('#' + tbodyId + ' tr');
@@ -1058,8 +1067,8 @@ function lerLinhasTabela(tbodyId){
   linhas.forEach(l=>{
     const nome = l.querySelector('.nome-participante')?.textContent || '';
     const pills = Array.from(l.querySelectorAll('.status-pill')).map(p=>{
-      const classe = ['presente','falta','justificada'].find(c=>p.classList.contains(c));
-      return CLASSE_PARA_SIGLA[classe] || 'F';
+      const classe = ['presente','falta','justificada','vazio'].find(c=>p.classList.contains(c)) || 'vazio';
+      return CLASSE_PARA_SIGLA.hasOwnProperty(classe) ? CLASSE_PARA_SIGLA[classe] : '';
     });
     dados.push({nome, pills});
   });
@@ -1110,7 +1119,7 @@ function ajustarPillsLinha(linha, totalColunas){
     const celulaExcluir = linha.lastElementChild;
     for(let i=0; i<diferenca; i++){
       const td = document.createElement('td');
-      td.innerHTML = '<span class="status-pill falta" onclick="alternarPresenca(this)">F</span>';
+      td.innerHTML = '<span class="status-pill vazio" onclick="alternarPresenca(this)"></span>';
       linha.insertBefore(td, celulaExcluir);
     }
   } else if(diferenca < 0){
@@ -1198,7 +1207,7 @@ function construirLinhaComPills(nome, pills, comExcluir, funcaoExcluir, idNome, 
   }
   html += '</td>';
   pills.forEach(sigla=>{
-    const classe = SIGLA_PARA_CLASSE[sigla] || 'falta';
+    const classe = SIGLA_PARA_CLASSE.hasOwnProperty(sigla) ? SIGLA_PARA_CLASSE[sigla] : 'vazio';
     html += `<td><span class="status-pill ${classe}" onclick="alternarPresenca(this)">${sigla}</span></td>`;
   });
   if(comExcluir){
